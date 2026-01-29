@@ -1,109 +1,100 @@
 import React from 'react';
-import { Users, Car, Wrench, Package } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
+import { Card, Row, Col, Statistic, List, Tag } from 'antd';
+import { UserOutlined, CarOutlined, ToolOutlined, InboxOutlined } from '@ant-design/icons';
 
 export const Dashboard: React.FC = () => {
-  const stats = [
-    { name: 'Clientes', value: '3', icon: Users, color: 'text-blue-600' },
-    { name: 'Vehículos', value: '3', icon: Car, color: 'text-green-600' },
-    { name: 'OTs Activas', value: '3', icon: Wrench, color: 'text-orange-600' },
-    { name: 'Items en Stock', value: '4', icon: Package, color: 'text-purple-600' },
+  const recentOrders = [
+    { id: '1', title: 'OT-001 - Toyota Corolla', description: 'Motor hace ruido', status: 'En Proceso', color: 'orange' },
+    { id: '2', title: 'OT-002 - Nissan Sentra', description: 'Cambio de aceite', status: 'Aprobado', color: 'green' },
+    { id: '3', title: 'OT-003 - Honda Civic', description: 'Frenos hacen ruido', status: 'En Revisión', color: 'blue' },
+  ];
+
+  const lowStock = [
+    { id: '1', name: 'Batería 12V 75Ah', sku: 'BAT-001', stock: 3, color: 'red' },
+    { id: '2', name: 'Pastillas de freno', sku: 'FRE-001', stock: 8, color: 'orange' },
   ];
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Resumen general del taller</p>
-      </div>
+    <div>
+      <h1 style={{ marginBottom: 24 }}>Dashboard</h1>
+      
+      <Row gutter={[16, 16]}>
+        <Col xs={24} sm={12} lg={6}>
+          <Card>
+            <Statistic
+              title="Clientes"
+              value={3}
+              prefix={<UserOutlined />}
+              valueStyle={{ color: '#1890ff' }}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <Card>
+            <Statistic
+              title="Vehículos"
+              value={3}
+              prefix={<CarOutlined />}
+              valueStyle={{ color: '#52c41a' }}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <Card>
+            <Statistic
+              title="OTs Activas"
+              value={3}
+              prefix={<ToolOutlined />}
+              valueStyle={{ color: '#fa8c16' }}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <Card>
+            <Statistic
+              title="Items en Stock"
+              value={4}
+              prefix={<InboxOutlined />}
+              valueStyle={{ color: '#722ed1' }}
+            />
+          </Card>
+        </Col>
+      </Row>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <Card key={stat.name}>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">{stat.name}</p>
-                    <p className="text-3xl font-bold mt-2">{stat.value}</p>
-                  </div>
-                  <div className={`p-3 rounded-full bg-accent ${stat.color}`}>
-                    <Icon className="h-6 w-6" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Órdenes de Trabajo Recientes</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 rounded-md bg-accent/50">
-                <div>
-                  <p className="font-medium">OT-001 - Toyota Corolla</p>
-                  <p className="text-sm text-muted-foreground">Motor hace ruido</p>
-                </div>
-                <span className="px-2 py-1 text-xs font-medium rounded-full bg-orange-100 text-orange-800">
-                  En Proceso
-                </span>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-md bg-accent/50">
-                <div>
-                  <p className="font-medium">OT-002 - Nissan Sentra</p>
-                  <p className="text-sm text-muted-foreground">Cambio de aceite</p>
-                </div>
-                <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
-                  Aprobado
-                </span>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-md bg-accent/50">
-                <div>
-                  <p className="font-medium">OT-003 - Honda Civic</p>
-                  <p className="text-sm text-muted-foreground">Frenos hacen ruido</p>
-                </div>
-                <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
-                  En Revisión
-                </span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Stock Bajo</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 rounded-md bg-accent/50">
-                <div>
-                  <p className="font-medium">Batería 12V 75Ah</p>
-                  <p className="text-sm text-muted-foreground">SKU: BAT-001</p>
-                </div>
-                <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">
-                  3 unidades
-                </span>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-md bg-accent/50">
-                <div>
-                  <p className="font-medium">Pastillas de freno</p>
-                  <p className="text-sm text-muted-foreground">SKU: FRE-001</p>
-                </div>
-                <span className="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">
-                  8 unidades
-                </span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
+        <Col xs={24} lg={12}>
+          <Card title="Órdenes de Trabajo Recientes">
+            <List
+              dataSource={recentOrders}
+              renderItem={item => (
+                <List.Item>
+                  <List.Item.Meta
+                    title={item.title}
+                    description={item.description}
+                  />
+                  <Tag color={item.color}>{item.status}</Tag>
+                </List.Item>
+              )}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} lg={12}>
+          <Card title="Stock Bajo">
+            <List
+              dataSource={lowStock}
+              renderItem={item => (
+                <List.Item>
+                  <List.Item.Meta
+                    title={item.name}
+                    description={`SKU: ${item.sku}`}
+                  />
+                  <Tag color={item.color}>{item.stock} unidades</Tag>
+                </List.Item>
+              )}
+            />
+          </Card>
+        </Col>
+      </Row>
     </div>
   );
 };

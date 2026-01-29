@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Edit, Trash2 } from 'lucide-react';
+import { Button, Input, Table, Space, Card, message } from 'antd';
+import { PlusOutlined, SearchOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import type { Customer } from '../types';
 import { customerService } from '../services/customerService';
-import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
-import { Card, CardHeader, CardContent } from '../components/ui/Card';
 import { CustomerForm } from '../components/customers/CustomerForm';
 
 export const Customers: React.FC = () => {
@@ -25,6 +23,7 @@ export const Customers: React.FC = () => {
       setCustomers(data);
     } catch (error) {
       console.error('Error loading customers:', error);
+      message.error('Error al cargar clientes');
     } finally {
       setLoading(false);
     }
@@ -42,6 +41,7 @@ export const Customers: React.FC = () => {
       setCustomers(data);
     } catch (error) {
       console.error('Error searching customers:', error);
+      message.error('Error al buscar clientes');
     } finally {
       setLoading(false);
     }
@@ -53,14 +53,13 @@ export const Customers: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('¿Está seguro de eliminar este cliente?')) return;
-    
     try {
       await customerService.delete(id);
+      message.success('Cliente eliminado exitosamente');
       loadCustomers();
     } catch (error) {
       console.error('Error deleting customer:', error);
-      alert('Error al eliminar cliente');
+      message.error('Error al eliminar cliente');
     }
   };
 
@@ -68,12 +67,68 @@ export const Customers: React.FC = () => {
     setShowForm(false);
     setEditingCustomer(null);
     loadCustomers();
+    message.success(editingCustomer ? 'Cliente actualizado' : 'Cliente creado exitosamente');
   };
 
   const handleFormCancel = () => {
     setShowForm(false);
     setEditingCustomer(null);
   };
+
+  const columns = [
+    {
+      title: 'Nombre',
+      dataIndex: 'nombre',
+      key: 'nombre',
+    },
+    {
+      title: 'Teléfono',
+      dataIndex: 'telefono',
+      key: 'telefono',
+    },
+    {
+      title: 'Cédula/RNC',
+      dataIndex: 'ciNit',
+      key: 'ciNit',
+      render: (text: string) => text || '-',
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+      render: (text: string) => text || '-',
+    },
+    {
+      title: 'Dirección',
+      dataIndex: 'direccion',
+      key: 'direccion',
+      render: (text: string) => text || '-',
+      ellipsis: true,
+    },
+    {
+      title: 'Acciones',
+      key: 'actions',
+      render: (_: unknown, record: Customer) => (
+        <Space>
+          <Button
+            icon={<EditOutlined />}
+            onClick={() => handleEdit(record)}
+            size="small"
+          >
+            Editar
+          </Button>
+          <Button
+            icon={<DeleteOutlined />}
+            onClick={() => handleDelete(record.clienteId)}
+            danger
+            size="small"
+          >
+            Eliminar
+          </Button>
+        </Space>
+      ),
+    },
+  ];
 
   if (showForm) {
     return (
@@ -86,92 +141,38 @@ export const Customers: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div>
+      <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 className="text-3xl font-bold">Clientes</h1>
-          <p className="text-muted-foreground">Gestión de clientes del taller</p>
+          <h1 style={{ margin: 0, fontSize: 24 }}>Clientes</h1>
+          <p style={{ color: '#666', margin: '4px 0 0 0' }}>Gestión de clientes del taller</p>
         </div>
-        <Button icon={Plus} onClick={() => setShowForm(true)}>
+        <Button type="primary" icon={<PlusOutlined />} onClick={() => setShowForm(true)}>
           Nuevo Cliente
         </Button>
       </div>
 
       <Card>
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex-1">
-              <Input
-                placeholder="Buscar por nombre, teléfono, cédula o email..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              />
-            </div>
-            <Button icon={Search} onClick={handleSearch}>
-              Buscar
-            </Button>
-          </div>
-        </CardHeader>
+        <Space style={{ marginBottom: 16, width: '100%' }}>
+          <Input
+            placeholder="Buscar por nombre, teléfono, cédula o email..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onPressEnter={handleSearch}
+            style={{ width: 400 }}
+          />
+          <Button type="primary" icon={<SearchOutlined />} onClick={handleSearch}>
+            Buscar
+          </Button>
+        </Space>
 
-        <CardContent>
-          {loading ? (
-            <div className="text-center py-12">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-              <p className="mt-2 text-muted-foreground">Cargando clientes...</p>
-            </div>
-          ) : customers.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">No se encontraron clientes</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left py-3 px-4 font-medium">Nombre</th>
-                    <th className="text-left py-3 px-4 font-medium">Teléfono</th>
-                    <th className="text-left py-3 px-4 font-medium">Cédula/RNC</th>
-                    <th className="text-left py-3 px-4 font-medium">Email</th>
-                    <th className="text-left py-3 px-4 font-medium">Dirección</th>
-                    <th className="text-right py-3 px-4 font-medium">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {customers.map((customer) => (
-                    <tr key={customer.clienteId} className="border-b border-border hover:bg-accent/50">
-                      <td className="py-3 px-4 font-medium">{customer.nombre}</td>
-                      <td className="py-3 px-4">{customer.telefono}</td>
-                      <td className="py-3 px-4">{customer.ciNit || '-'}</td>
-                      <td className="py-3 px-4">{customer.email || '-'}</td>
-                      <td className="py-3 px-4 max-w-xs truncate">{customer.direccion || '-'}</td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            icon={Edit}
-                            onClick={() => handleEdit(customer)}
-                          >
-                            Editar
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            icon={Trash2}
-                            onClick={() => handleDelete(customer.clienteId)}
-                          >
-                            Eliminar
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </CardContent>
+        <Table
+          columns={columns}
+          dataSource={customers}
+          loading={loading}
+          rowKey="clienteId"
+          pagination={{ pageSize: 10 }}
+        />
       </Card>
     </div>
   );

@@ -1,30 +1,19 @@
 import React from 'react';
-import { Bell, User, LogOut } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { Layout, Button, Space, Avatar } from 'antd';
+import { BellOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
+
+const { Header } = Layout;
 
 export const Navbar: React.FC = () => {
   return (
-    <header className="h-16 border-b border-border bg-background sticky top-0 z-10">
-      <div className="h-full px-6 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <h2 className="text-lg font-semibold">Bienvenido</h2>
-        </div>
-        
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" icon={Bell}>
-            <span className="sr-only">Notificaciones</span>
-          </Button>
-          
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-accent">
-            <User className="h-4 w-4" />
-            <span className="text-sm font-medium">Admin</span>
-          </div>
-          
-          <Button variant="ghost" size="sm" icon={LogOut}>
-            Salir
-          </Button>
-        </div>
-      </div>
-    </header>
+    <Header style={{ background: '#fff', padding: '0 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <h2 style={{ margin: 0 }}>Bienvenido</h2>
+      <Space>
+        <Button icon={<BellOutlined />} type="text" />
+        <Avatar icon={<UserOutlined />} />
+        <span>Admin</span>
+        <Button icon={<LogoutOutlined />} type="text">Salir</Button>
+      </Space>
+    </Header>
   );
 };

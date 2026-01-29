@@ -1,6 +1,9 @@
 import React from 'react';
+import { Layout as AntLayout } from 'antd';
 import { Sidebar } from './Sidebar';
 import { Navbar } from './Navbar';
+
+const { Content } = AntLayout;
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -8,14 +11,14 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="flex h-screen bg-background">
+    <AntLayout style={{ minHeight: '100vh' }}>
       <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <AntLayout>
         <Navbar />
-        <main className="flex-1 overflow-y-auto p-6">
+        <Content style={{ margin: '24px 16px', padding: 24, background: '#fff' }}>
           {children}
-        </main>
-      </div>
-    </div>
+        </Content>
+      </AntLayout>
+    </AntLayout>
   );
 };
