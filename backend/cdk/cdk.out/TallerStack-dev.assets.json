@@ -1,0 +1,66 @@
+{
+  "version": "48.0.0",
+  "files": {
+    "c23aa17057f184ae3cb91cf9c3a220377b9f96b9b45b1461b5370afc6d4dd730": {
+      "displayName": "SharedLayer/Code",
+      "source": {
+        "path": "asset.c23aa17057f184ae3cb91cf9c3a220377b9f96b9b45b1461b5370afc6d4dd730",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "471112701953-us-east-1-f9d6fc19": {
+          "bucketName": "cdk-hnb659fds-assets-471112701953-us-east-1",
+          "objectKey": "c23aa17057f184ae3cb91cf9c3a220377b9f96b9b45b1461b5370afc6d4dd730.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::471112701953:role/cdk-hnb659fds-file-publishing-role-471112701953-us-east-1"
+        }
+      }
+    },
+    "abc832aa64b5c10967892840753fbf3b869ec46caab3ed8a5f4709666bb8b238": {
+      "displayName": "CustomerCreateFunction/Code",
+      "source": {
+        "path": "asset.abc832aa64b5c10967892840753fbf3b869ec46caab3ed8a5f4709666bb8b238",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "471112701953-us-east-1-a7cf7fb0": {
+          "bucketName": "cdk-hnb659fds-assets-471112701953-us-east-1",
+          "objectKey": "abc832aa64b5c10967892840753fbf3b869ec46caab3ed8a5f4709666bb8b238.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::471112701953:role/cdk-hnb659fds-file-publishing-role-471112701953-us-east-1"
+        }
+      }
+    },
+    "ffa4327af7e4a4b4130b3afb776aa32497c1aada91b411c3773bd4284f4f84f4": {
+      "displayName": "VehicleCreateFunction/Code",
+      "source": {
+        "path": "asset.ffa4327af7e4a4b4130b3afb776aa32497c1aada91b411c3773bd4284f4f84f4",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "471112701953-us-east-1-de0b8535": {
+          "bucketName": "cdk-hnb659fds-assets-471112701953-us-east-1",
+          "objectKey": "ffa4327af7e4a4b4130b3afb776aa32497c1aada91b411c3773bd4284f4f84f4.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::471112701953:role/cdk-hnb659fds-file-publishing-role-471112701953-us-east-1"
+        }
+      }
+    },
+    "5921c9f6c82a7220ddbe7278099d6cb1ac8da1bf023ec012f7409947fa919274": {
+      "displayName": "TallerDemo-dev Template",
+      "source": {
+        "path": "TallerStack-dev.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "471112701953-us-east-1-c4a04170": {
+          "bucketName": "cdk-hnb659fds-assets-471112701953-us-east-1",
+          "objectKey": "5921c9f6c82a7220ddbe7278099d6cb1ac8da1bf023ec012f7409947fa919274.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::471112701953:role/cdk-hnb659fds-file-publishing-role-471112701953-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

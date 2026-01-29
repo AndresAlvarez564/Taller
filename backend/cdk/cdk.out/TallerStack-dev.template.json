@@ -1,0 +1,2822 @@
+{
+ "Description": "Sistema de Gestión de Taller - TallerDemo (dev)",
+ "Resources": {
+  "ClientesTable3789C82A": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "clienteId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "nombre",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "nombre-index",
+      "KeySchema": [
+       {
+        "AttributeName": "nombre",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "clienteId",
+      "KeyType": "HASH"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "TableName": "TallerDemo-dev-Clientes"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/ClientesTable/Resource"
+   }
+  },
+  "VehiculosTableCF842E6B": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "vehiculoId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "placa",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "customerId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "placa-index",
+      "KeySchema": [
+       {
+        "AttributeName": "placa",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "customerId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "customerId",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "vehiculoId",
+      "KeyType": "HASH"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "TableName": "TallerDemo-dev-Vehiculos"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/VehiculosTable/Resource"
+   }
+  },
+  "OrdenesTrabajoTable1EF0400C": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "workOrderId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "estado",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "creadoEn",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "customerId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "estado-creadoEn-index",
+      "KeySchema": [
+       {
+        "AttributeName": "estado",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "creadoEn",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "customerId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "customerId",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "workOrderId",
+      "KeyType": "HASH"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "TableName": "TallerDemo-dev-OrdenesTrabajo"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/OrdenesTrabajoTable/Resource"
+   }
+  },
+  "InventarioTable83FADDE8": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "inventarioItemId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "sku",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "sku-index",
+      "KeySchema": [
+       {
+        "AttributeName": "sku",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "inventarioItemId",
+      "KeyType": "HASH"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "TableName": "TallerDemo-dev-InventarioItems"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/InventarioTable/Resource"
+   }
+  },
+  "FacturasTable102DC65A": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "facturaId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "numeroFactura",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "estado",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "creadoEn",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "numeroFactura-index",
+      "KeySchema": [
+       {
+        "AttributeName": "numeroFactura",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     },
+     {
+      "IndexName": "estado-creadoEn-index",
+      "KeySchema": [
+       {
+        "AttributeName": "estado",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "creadoEn",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "facturaId",
+      "KeyType": "HASH"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "TableName": "TallerDemo-dev-Facturas"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/FacturasTable/Resource"
+   }
+  },
+  "DetallesTable28F27DF0": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "SK",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "PK",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "SK",
+      "KeyType": "RANGE"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "TableName": "TallerDemo-dev-Detalles"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/DetallesTable/Resource"
+   }
+  },
+  "UsuariosTable8B6AF0F5": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "userId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "userId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "TallerDemo-dev-Usuarios"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/UsuariosTable/Resource"
+   }
+  },
+  "ConfiguracionTableBC5E39F3": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "config",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "config",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "TallerDemo-dev-ConfiguracionTaller"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/ConfiguracionTable/Resource"
+   }
+  },
+  "RolesPermisosTable130D2A0B": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "rolId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "rolId",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "TallerDemo-dev-RolesPermisos"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/RolesPermisosTable/Resource"
+   }
+  },
+  "DocumentsBucket9EC9DEB9": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "SSEAlgorithm": "AES256"
+       }
+      }
+     ]
+    },
+    "BucketName": "tallerdemo-dev-documents",
+    "LifecycleConfiguration": {
+     "Rules": [
+      {
+       "Id": "archive-old-pdfs",
+       "Status": "Enabled",
+       "Transitions": [
+        {
+         "StorageClass": "STANDARD_IA",
+         "TransitionInDays": 90
+        },
+        {
+         "StorageClass": "GLACIER",
+         "TransitionInDays": 365
+        }
+       ]
+      }
+     ]
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "VersioningConfiguration": {
+     "Status": "Enabled"
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/DocumentsBucket/Resource"
+   }
+  },
+  "UserPool6BA7E5F2": {
+   "Type": "AWS::Cognito::UserPool",
+   "Properties": {
+    "AccountRecoverySetting": {
+     "RecoveryMechanisms": [
+      {
+       "Name": "verified_email",
+       "Priority": 1
+      }
+     ]
+    },
+    "AdminCreateUserConfig": {
+     "AllowAdminCreateUserOnly": true
+    },
+    "AliasAttributes": [
+     "email"
+    ],
+    "AutoVerifiedAttributes": [
+     "email"
+    ],
+    "EmailVerificationMessage": "The verification code to your new account is {####}",
+    "EmailVerificationSubject": "Verify your new account",
+    "Policies": {
+     "PasswordPolicy": {
+      "MinimumLength": 8,
+      "RequireLowercase": true,
+      "RequireNumbers": true,
+      "RequireSymbols": false,
+      "RequireUppercase": true
+     }
+    },
+    "SmsVerificationMessage": "The verification code to your new account is {####}",
+    "UserPoolName": "TallerDemo-dev-users",
+    "VerificationMessageTemplate": {
+     "DefaultEmailOption": "CONFIRM_WITH_CODE",
+     "EmailMessage": "The verification code to your new account is {####}",
+     "EmailSubject": "Verify your new account",
+     "SmsMessage": "The verification code to your new account is {####}"
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/UserPool/Resource"
+   }
+  },
+  "UserPoolUserPoolClient40176907": {
+   "Type": "AWS::Cognito::UserPoolClient",
+   "Properties": {
+    "AllowedOAuthFlows": [
+     "implicit",
+     "code"
+    ],
+    "AllowedOAuthFlowsUserPoolClient": true,
+    "AllowedOAuthScopes": [
+     "profile",
+     "phone",
+     "email",
+     "openid",
+     "aws.cognito.signin.user.admin"
+    ],
+    "CallbackURLs": [
+     "https://example.com"
+    ],
+    "ExplicitAuthFlows": [
+     "ALLOW_USER_PASSWORD_AUTH",
+     "ALLOW_USER_SRP_AUTH",
+     "ALLOW_REFRESH_TOKEN_AUTH"
+    ],
+    "GenerateSecret": false,
+    "SupportedIdentityProviders": [
+     "COGNITO"
+    ],
+    "UserPoolId": {
+     "Ref": "UserPool6BA7E5F2"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/UserPool/UserPoolClient/Resource"
+   }
+  },
+  "SharedLayer27DFABF0": {
+   "Type": "AWS::Lambda::LayerVersion",
+   "Properties": {
+    "CompatibleRuntimes": [
+     "python3.11"
+    ],
+    "Content": {
+     "S3Bucket": "cdk-hnb659fds-assets-471112701953-us-east-1",
+     "S3Key": "c23aa17057f184ae3cb91cf9c3a220377b9f96b9b45b1461b5370afc6d4dd730.zip"
+    },
+    "Description": "Shared utilities for all lambdas"
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/SharedLayer/Resource",
+    "aws:asset:path": "asset.c23aa17057f184ae3cb91cf9c3a220377b9f96b9b45b1461b5370afc6d4dd730",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Content"
+   }
+  },
+  "TallerApi308E33A6": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Description": "API para Sistema de Gestión de Taller",
+    "Name": "TallerDemo-dev-API"
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Resource"
+   }
+  },
+  "TallerApiDeployment7348EA77edac4f1c2600694814e1a800173512f6": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "API para Sistema de Gestión de Taller",
+    "RestApiId": {
+     "Ref": "TallerApi308E33A6"
+    }
+   },
+   "DependsOn": [
+    "TallerApicustomersclienteIdDELETE822787D8",
+    "TallerApicustomersclienteIdGET42BD5BC6",
+    "TallerApicustomersclienteIdOPTIONSD92EF3D3",
+    "TallerApicustomersclienteIdPUT28727216",
+    "TallerApicustomersclienteIdDB6C2396",
+    "TallerApicustomersGET3CC757C3",
+    "TallerApicustomersOPTIONS94AC0FE3",
+    "TallerApicustomersPOST68E31F9F",
+    "TallerApicustomers8FFE8472",
+    "TallerApiOPTIONS9A472754",
+    "TallerApivehiclesvehiculoIdGET1CCB4AF5",
+    "TallerApivehiclesvehiculoIdOPTIONS3CC50086",
+    "TallerApivehiclesvehiculoId7D077DBB",
+    "TallerApivehiclesGET1063881C",
+    "TallerApivehiclesOPTIONS9CBB8542",
+    "TallerApivehiclesPOST464153F4",
+    "TallerApivehicles92E51605"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Deployment/Resource",
+    "aws:cdk:do-not-refactor": true
+   }
+  },
+  "TallerApiDeploymentStageapi0E447E46": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "TallerApiDeployment7348EA77edac4f1c2600694814e1a800173512f6"
+    },
+    "MethodSettings": [
+     {
+      "DataTraceEnabled": false,
+      "HttpMethod": "*",
+      "ResourcePath": "/*",
+      "ThrottlingBurstLimit": 200,
+      "ThrottlingRateLimit": 100
+     }
+    ],
+    "RestApiId": {
+     "Ref": "TallerApi308E33A6"
+    },
+    "StageName": "api"
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/DeploymentStage.api/Resource"
+   }
+  },
+  "TallerApiOPTIONS9A472754": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "TallerApi308E33A6",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "TallerApi308E33A6"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/OPTIONS/Resource"
+   }
+  },
+  "TallerApicustomers8FFE8472": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "TallerApi308E33A6",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "customers",
+    "RestApiId": {
+     "Ref": "TallerApi308E33A6"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/customers/Resource"
+   }
+  },
+  "TallerApicustomersOPTIONS94AC0FE3": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "TallerApicustomers8FFE8472"
+    },
+    "RestApiId": {
+     "Ref": "TallerApi308E33A6"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/customers/OPTIONS/Resource"
+   }
+  },
+  "TallerApicustomersPOSTApiPermissionTallerStackdevTallerApiACF247F4POSTcustomers4527137E": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "CustomerCreateFunctionE2DC13ED",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:471112701953:",
+       {
+        "Ref": "TallerApi308E33A6"
+       },
+       "/",
+       {
+        "Ref": "TallerApiDeploymentStageapi0E447E46"
+       },
+       "/POST/customers"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/customers/POST/ApiPermission.TallerStackdevTallerApiACF247F4.POST..customers"
+   }
+  },
+  "TallerApicustomersPOSTApiPermissionTestTallerStackdevTallerApiACF247F4POSTcustomers227EB348": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "CustomerCreateFunctionE2DC13ED",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:471112701953:",
+       {
+        "Ref": "TallerApi308E33A6"
+       },
+       "/test-invoke-stage/POST/customers"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/customers/POST/ApiPermission.Test.TallerStackdevTallerApiACF247F4.POST..customers"
+   }
+  },
+  "TallerApicustomersPOST68E31F9F": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "CustomerCreateFunctionE2DC13ED",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "TallerApicustomers8FFE8472"
+    },
+    "RestApiId": {
+     "Ref": "TallerApi308E33A6"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/customers/POST/Resource"
+   }
+  },
+  "TallerApicustomersGETApiPermissionTallerStackdevTallerApiACF247F4GETcustomersE2B265F8": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "CustomerReadFunction394FA1F6",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:471112701953:",
+       {
+        "Ref": "TallerApi308E33A6"
+       },
+       "/",
+       {
+        "Ref": "TallerApiDeploymentStageapi0E447E46"
+       },
+       "/GET/customers"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/customers/GET/ApiPermission.TallerStackdevTallerApiACF247F4.GET..customers"
+   }
+  },
+  "TallerApicustomersGETApiPermissionTestTallerStackdevTallerApiACF247F4GETcustomers2481DB77": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "CustomerReadFunction394FA1F6",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:471112701953:",
+       {
+        "Ref": "TallerApi308E33A6"
+       },
+       "/test-invoke-stage/GET/customers"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/customers/GET/ApiPermission.Test.TallerStackdevTallerApiACF247F4.GET..customers"
+   }
+  },
+  "TallerApicustomersGET3CC757C3": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "CustomerReadFunction394FA1F6",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "TallerApicustomers8FFE8472"
+    },
+    "RestApiId": {
+     "Ref": "TallerApi308E33A6"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/customers/GET/Resource"
+   }
+  },
+  "TallerApicustomersclienteIdDB6C2396": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "TallerApicustomers8FFE8472"
+    },
+    "PathPart": "{clienteId}",
+    "RestApiId": {
+     "Ref": "TallerApi308E33A6"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/customers/{clienteId}/Resource"
+   }
+  },
+  "TallerApicustomersclienteIdOPTIONSD92EF3D3": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "TallerApicustomersclienteIdDB6C2396"
+    },
+    "RestApiId": {
+     "Ref": "TallerApi308E33A6"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/customers/{clienteId}/OPTIONS/Resource"
+   }
+  },
+  "TallerApicustomersclienteIdGETApiPermissionTallerStackdevTallerApiACF247F4GETcustomersclienteId9B47C179": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "CustomerReadFunction394FA1F6",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:471112701953:",
+       {
+        "Ref": "TallerApi308E33A6"
+       },
+       "/",
+       {
+        "Ref": "TallerApiDeploymentStageapi0E447E46"
+       },
+       "/GET/customers/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/customers/{clienteId}/GET/ApiPermission.TallerStackdevTallerApiACF247F4.GET..customers.{clienteId}"
+   }
+  },
+  "TallerApicustomersclienteIdGETApiPermissionTestTallerStackdevTallerApiACF247F4GETcustomersclienteId98FF7811": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "CustomerReadFunction394FA1F6",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:471112701953:",
+       {
+        "Ref": "TallerApi308E33A6"
+       },
+       "/test-invoke-stage/GET/customers/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/customers/{clienteId}/GET/ApiPermission.Test.TallerStackdevTallerApiACF247F4.GET..customers.{clienteId}"
+   }
+  },
+  "TallerApicustomersclienteIdGET42BD5BC6": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "CustomerReadFunction394FA1F6",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "TallerApicustomersclienteIdDB6C2396"
+    },
+    "RestApiId": {
+     "Ref": "TallerApi308E33A6"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/customers/{clienteId}/GET/Resource"
+   }
+  },
+  "TallerApicustomersclienteIdPUTApiPermissionTallerStackdevTallerApiACF247F4PUTcustomersclienteId266EC7D0": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "CustomerUpdateFunction217E460E",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:471112701953:",
+       {
+        "Ref": "TallerApi308E33A6"
+       },
+       "/",
+       {
+        "Ref": "TallerApiDeploymentStageapi0E447E46"
+       },
+       "/PUT/customers/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/customers/{clienteId}/PUT/ApiPermission.TallerStackdevTallerApiACF247F4.PUT..customers.{clienteId}"
+   }
+  },
+  "TallerApicustomersclienteIdPUTApiPermissionTestTallerStackdevTallerApiACF247F4PUTcustomersclienteId7BE10225": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "CustomerUpdateFunction217E460E",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:471112701953:",
+       {
+        "Ref": "TallerApi308E33A6"
+       },
+       "/test-invoke-stage/PUT/customers/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/customers/{clienteId}/PUT/ApiPermission.Test.TallerStackdevTallerApiACF247F4.PUT..customers.{clienteId}"
+   }
+  },
+  "TallerApicustomersclienteIdPUT28727216": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "PUT",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "CustomerUpdateFunction217E460E",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "TallerApicustomersclienteIdDB6C2396"
+    },
+    "RestApiId": {
+     "Ref": "TallerApi308E33A6"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/customers/{clienteId}/PUT/Resource"
+   }
+  },
+  "TallerApicustomersclienteIdDELETEApiPermissionTallerStackdevTallerApiACF247F4DELETEcustomersclienteId9D5BC04F": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "CustomerDeleteFunction3E394847",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:471112701953:",
+       {
+        "Ref": "TallerApi308E33A6"
+       },
+       "/",
+       {
+        "Ref": "TallerApiDeploymentStageapi0E447E46"
+       },
+       "/DELETE/customers/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/customers/{clienteId}/DELETE/ApiPermission.TallerStackdevTallerApiACF247F4.DELETE..customers.{clienteId}"
+   }
+  },
+  "TallerApicustomersclienteIdDELETEApiPermissionTestTallerStackdevTallerApiACF247F4DELETEcustomersclienteIdA4716A84": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "CustomerDeleteFunction3E394847",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:471112701953:",
+       {
+        "Ref": "TallerApi308E33A6"
+       },
+       "/test-invoke-stage/DELETE/customers/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/customers/{clienteId}/DELETE/ApiPermission.Test.TallerStackdevTallerApiACF247F4.DELETE..customers.{clienteId}"
+   }
+  },
+  "TallerApicustomersclienteIdDELETE822787D8": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "DELETE",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "CustomerDeleteFunction3E394847",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "TallerApicustomersclienteIdDB6C2396"
+    },
+    "RestApiId": {
+     "Ref": "TallerApi308E33A6"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/customers/{clienteId}/DELETE/Resource"
+   }
+  },
+  "TallerApivehicles92E51605": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "TallerApi308E33A6",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "vehicles",
+    "RestApiId": {
+     "Ref": "TallerApi308E33A6"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/vehicles/Resource"
+   }
+  },
+  "TallerApivehiclesOPTIONS9CBB8542": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "TallerApivehicles92E51605"
+    },
+    "RestApiId": {
+     "Ref": "TallerApi308E33A6"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/vehicles/OPTIONS/Resource"
+   }
+  },
+  "TallerApivehiclesPOSTApiPermissionTallerStackdevTallerApiACF247F4POSTvehiclesAE7AD8EB": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "VehicleCreateFunctionF2C1EC2B",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:471112701953:",
+       {
+        "Ref": "TallerApi308E33A6"
+       },
+       "/",
+       {
+        "Ref": "TallerApiDeploymentStageapi0E447E46"
+       },
+       "/POST/vehicles"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/vehicles/POST/ApiPermission.TallerStackdevTallerApiACF247F4.POST..vehicles"
+   }
+  },
+  "TallerApivehiclesPOSTApiPermissionTestTallerStackdevTallerApiACF247F4POSTvehicles58D2A95F": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "VehicleCreateFunctionF2C1EC2B",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:471112701953:",
+       {
+        "Ref": "TallerApi308E33A6"
+       },
+       "/test-invoke-stage/POST/vehicles"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/vehicles/POST/ApiPermission.Test.TallerStackdevTallerApiACF247F4.POST..vehicles"
+   }
+  },
+  "TallerApivehiclesPOST464153F4": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "VehicleCreateFunctionF2C1EC2B",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "TallerApivehicles92E51605"
+    },
+    "RestApiId": {
+     "Ref": "TallerApi308E33A6"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/vehicles/POST/Resource"
+   }
+  },
+  "TallerApivehiclesGETApiPermissionTallerStackdevTallerApiACF247F4GETvehiclesCF5FCA18": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "VehicleReadFunction491CA780",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:471112701953:",
+       {
+        "Ref": "TallerApi308E33A6"
+       },
+       "/",
+       {
+        "Ref": "TallerApiDeploymentStageapi0E447E46"
+       },
+       "/GET/vehicles"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/vehicles/GET/ApiPermission.TallerStackdevTallerApiACF247F4.GET..vehicles"
+   }
+  },
+  "TallerApivehiclesGETApiPermissionTestTallerStackdevTallerApiACF247F4GETvehicles0B84401C": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "VehicleReadFunction491CA780",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:471112701953:",
+       {
+        "Ref": "TallerApi308E33A6"
+       },
+       "/test-invoke-stage/GET/vehicles"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/vehicles/GET/ApiPermission.Test.TallerStackdevTallerApiACF247F4.GET..vehicles"
+   }
+  },
+  "TallerApivehiclesGET1063881C": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "VehicleReadFunction491CA780",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "TallerApivehicles92E51605"
+    },
+    "RestApiId": {
+     "Ref": "TallerApi308E33A6"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/vehicles/GET/Resource"
+   }
+  },
+  "TallerApivehiclesvehiculoId7D077DBB": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "TallerApivehicles92E51605"
+    },
+    "PathPart": "{vehiculoId}",
+    "RestApiId": {
+     "Ref": "TallerApi308E33A6"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/vehicles/{vehiculoId}/Resource"
+   }
+  },
+  "TallerApivehiclesvehiculoIdOPTIONS3CC50086": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "TallerApivehiclesvehiculoId7D077DBB"
+    },
+    "RestApiId": {
+     "Ref": "TallerApi308E33A6"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/vehicles/{vehiculoId}/OPTIONS/Resource"
+   }
+  },
+  "TallerApivehiclesvehiculoIdGETApiPermissionTallerStackdevTallerApiACF247F4GETvehiclesvehiculoId8FE1ECC6": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "VehicleReadFunction491CA780",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:471112701953:",
+       {
+        "Ref": "TallerApi308E33A6"
+       },
+       "/",
+       {
+        "Ref": "TallerApiDeploymentStageapi0E447E46"
+       },
+       "/GET/vehicles/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/vehicles/{vehiculoId}/GET/ApiPermission.TallerStackdevTallerApiACF247F4.GET..vehicles.{vehiculoId}"
+   }
+  },
+  "TallerApivehiclesvehiculoIdGETApiPermissionTestTallerStackdevTallerApiACF247F4GETvehiclesvehiculoId7F1D202C": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "VehicleReadFunction491CA780",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:471112701953:",
+       {
+        "Ref": "TallerApi308E33A6"
+       },
+       "/test-invoke-stage/GET/vehicles/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/vehicles/{vehiculoId}/GET/ApiPermission.Test.TallerStackdevTallerApiACF247F4.GET..vehicles.{vehiculoId}"
+   }
+  },
+  "TallerApivehiclesvehiculoIdGET1CCB4AF5": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "VehicleReadFunction491CA780",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "TallerApivehiclesvehiculoId7D077DBB"
+    },
+    "RestApiId": {
+     "Ref": "TallerApi308E33A6"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/TallerApi/Default/vehicles/{vehiculoId}/GET/Resource"
+   }
+  },
+  "CustomerCreateFunctionServiceRoleDA042926": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/CustomerCreateFunction/ServiceRole/Resource"
+   }
+  },
+  "CustomerCreateFunctionServiceRoleDefaultPolicyE6583645": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ClientesTable3789C82A",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ClientesTable3789C82A",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "CustomerCreateFunctionServiceRoleDefaultPolicyE6583645",
+    "Roles": [
+     {
+      "Ref": "CustomerCreateFunctionServiceRoleDA042926"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/CustomerCreateFunction/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "CustomerCreateFunctionE2DC13ED": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-471112701953-us-east-1",
+     "S3Key": "abc832aa64b5c10967892840753fbf3b869ec46caab3ed8a5f4709666bb8b238.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "CLIENTES_TABLE": {
+       "Ref": "ClientesTable3789C82A"
+      },
+      "VEHICULOS_TABLE": {
+       "Ref": "VehiculosTableCF842E6B"
+      },
+      "ORDENES_TRABAJO_TABLE": {
+       "Ref": "OrdenesTrabajoTable1EF0400C"
+      },
+      "INVENTARIO_TABLE": {
+       "Ref": "InventarioTable83FADDE8"
+      },
+      "FACTURAS_TABLE": {
+       "Ref": "FacturasTable102DC65A"
+      },
+      "DETALLES_TABLE": {
+       "Ref": "DetallesTable28F27DF0"
+      },
+      "USUARIOS_TABLE": {
+       "Ref": "UsuariosTable8B6AF0F5"
+      },
+      "CONFIGURACION_TABLE": {
+       "Ref": "ConfiguracionTableBC5E39F3"
+      },
+      "ROLES_PERMISOS_TABLE": {
+       "Ref": "RolesPermisosTable130D2A0B"
+      },
+      "DOCUMENTS_BUCKET": {
+       "Ref": "DocumentsBucket9EC9DEB9"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      }
+     }
+    },
+    "Handler": "create.lambda_handler",
+    "Layers": [
+     {
+      "Ref": "SharedLayer27DFABF0"
+     }
+    ],
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomerCreateFunctionServiceRoleDA042926",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "CustomerCreateFunctionServiceRoleDefaultPolicyE6583645",
+    "CustomerCreateFunctionServiceRoleDA042926"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/CustomerCreateFunction/Resource",
+    "aws:asset:path": "asset.abc832aa64b5c10967892840753fbf3b869ec46caab3ed8a5f4709666bb8b238",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "CustomerReadFunctionServiceRole9748F907": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/CustomerReadFunction/ServiceRole/Resource"
+   }
+  },
+  "CustomerReadFunctionServiceRoleDefaultPolicy32C815CC": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:Scan"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ClientesTable3789C82A",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ClientesTable3789C82A",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "CustomerReadFunctionServiceRoleDefaultPolicy32C815CC",
+    "Roles": [
+     {
+      "Ref": "CustomerReadFunctionServiceRole9748F907"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/CustomerReadFunction/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "CustomerReadFunction394FA1F6": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-471112701953-us-east-1",
+     "S3Key": "abc832aa64b5c10967892840753fbf3b869ec46caab3ed8a5f4709666bb8b238.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "CLIENTES_TABLE": {
+       "Ref": "ClientesTable3789C82A"
+      },
+      "VEHICULOS_TABLE": {
+       "Ref": "VehiculosTableCF842E6B"
+      },
+      "ORDENES_TRABAJO_TABLE": {
+       "Ref": "OrdenesTrabajoTable1EF0400C"
+      },
+      "INVENTARIO_TABLE": {
+       "Ref": "InventarioTable83FADDE8"
+      },
+      "FACTURAS_TABLE": {
+       "Ref": "FacturasTable102DC65A"
+      },
+      "DETALLES_TABLE": {
+       "Ref": "DetallesTable28F27DF0"
+      },
+      "USUARIOS_TABLE": {
+       "Ref": "UsuariosTable8B6AF0F5"
+      },
+      "CONFIGURACION_TABLE": {
+       "Ref": "ConfiguracionTableBC5E39F3"
+      },
+      "ROLES_PERMISOS_TABLE": {
+       "Ref": "RolesPermisosTable130D2A0B"
+      },
+      "DOCUMENTS_BUCKET": {
+       "Ref": "DocumentsBucket9EC9DEB9"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      }
+     }
+    },
+    "Handler": "read.lambda_handler",
+    "Layers": [
+     {
+      "Ref": "SharedLayer27DFABF0"
+     }
+    ],
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomerReadFunctionServiceRole9748F907",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "CustomerReadFunctionServiceRoleDefaultPolicy32C815CC",
+    "CustomerReadFunctionServiceRole9748F907"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/CustomerReadFunction/Resource",
+    "aws:asset:path": "asset.abc832aa64b5c10967892840753fbf3b869ec46caab3ed8a5f4709666bb8b238",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "CustomerUpdateFunctionServiceRoleD2E34716": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/CustomerUpdateFunction/ServiceRole/Resource"
+   }
+  },
+  "CustomerUpdateFunctionServiceRoleDefaultPolicyA24DF84E": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ClientesTable3789C82A",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ClientesTable3789C82A",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "CustomerUpdateFunctionServiceRoleDefaultPolicyA24DF84E",
+    "Roles": [
+     {
+      "Ref": "CustomerUpdateFunctionServiceRoleD2E34716"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/CustomerUpdateFunction/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "CustomerUpdateFunction217E460E": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-471112701953-us-east-1",
+     "S3Key": "abc832aa64b5c10967892840753fbf3b869ec46caab3ed8a5f4709666bb8b238.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "CLIENTES_TABLE": {
+       "Ref": "ClientesTable3789C82A"
+      },
+      "VEHICULOS_TABLE": {
+       "Ref": "VehiculosTableCF842E6B"
+      },
+      "ORDENES_TRABAJO_TABLE": {
+       "Ref": "OrdenesTrabajoTable1EF0400C"
+      },
+      "INVENTARIO_TABLE": {
+       "Ref": "InventarioTable83FADDE8"
+      },
+      "FACTURAS_TABLE": {
+       "Ref": "FacturasTable102DC65A"
+      },
+      "DETALLES_TABLE": {
+       "Ref": "DetallesTable28F27DF0"
+      },
+      "USUARIOS_TABLE": {
+       "Ref": "UsuariosTable8B6AF0F5"
+      },
+      "CONFIGURACION_TABLE": {
+       "Ref": "ConfiguracionTableBC5E39F3"
+      },
+      "ROLES_PERMISOS_TABLE": {
+       "Ref": "RolesPermisosTable130D2A0B"
+      },
+      "DOCUMENTS_BUCKET": {
+       "Ref": "DocumentsBucket9EC9DEB9"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      }
+     }
+    },
+    "Handler": "update.lambda_handler",
+    "Layers": [
+     {
+      "Ref": "SharedLayer27DFABF0"
+     }
+    ],
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomerUpdateFunctionServiceRoleD2E34716",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "CustomerUpdateFunctionServiceRoleDefaultPolicyA24DF84E",
+    "CustomerUpdateFunctionServiceRoleD2E34716"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/CustomerUpdateFunction/Resource",
+    "aws:asset:path": "asset.abc832aa64b5c10967892840753fbf3b869ec46caab3ed8a5f4709666bb8b238",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "CustomerDeleteFunctionServiceRoleE5F6C45B": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/CustomerDeleteFunction/ServiceRole/Resource"
+   }
+  },
+  "CustomerDeleteFunctionServiceRoleDefaultPolicy35BA4264": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ClientesTable3789C82A",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ClientesTable3789C82A",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:Scan"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "OrdenesTrabajoTable1EF0400C",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "OrdenesTrabajoTable1EF0400C",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "CustomerDeleteFunctionServiceRoleDefaultPolicy35BA4264",
+    "Roles": [
+     {
+      "Ref": "CustomerDeleteFunctionServiceRoleE5F6C45B"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/CustomerDeleteFunction/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "CustomerDeleteFunction3E394847": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-471112701953-us-east-1",
+     "S3Key": "abc832aa64b5c10967892840753fbf3b869ec46caab3ed8a5f4709666bb8b238.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "CLIENTES_TABLE": {
+       "Ref": "ClientesTable3789C82A"
+      },
+      "VEHICULOS_TABLE": {
+       "Ref": "VehiculosTableCF842E6B"
+      },
+      "ORDENES_TRABAJO_TABLE": {
+       "Ref": "OrdenesTrabajoTable1EF0400C"
+      },
+      "INVENTARIO_TABLE": {
+       "Ref": "InventarioTable83FADDE8"
+      },
+      "FACTURAS_TABLE": {
+       "Ref": "FacturasTable102DC65A"
+      },
+      "DETALLES_TABLE": {
+       "Ref": "DetallesTable28F27DF0"
+      },
+      "USUARIOS_TABLE": {
+       "Ref": "UsuariosTable8B6AF0F5"
+      },
+      "CONFIGURACION_TABLE": {
+       "Ref": "ConfiguracionTableBC5E39F3"
+      },
+      "ROLES_PERMISOS_TABLE": {
+       "Ref": "RolesPermisosTable130D2A0B"
+      },
+      "DOCUMENTS_BUCKET": {
+       "Ref": "DocumentsBucket9EC9DEB9"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      }
+     }
+    },
+    "Handler": "delete.lambda_handler",
+    "Layers": [
+     {
+      "Ref": "SharedLayer27DFABF0"
+     }
+    ],
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomerDeleteFunctionServiceRoleE5F6C45B",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "CustomerDeleteFunctionServiceRoleDefaultPolicy35BA4264",
+    "CustomerDeleteFunctionServiceRoleE5F6C45B"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/CustomerDeleteFunction/Resource",
+    "aws:asset:path": "asset.abc832aa64b5c10967892840753fbf3b869ec46caab3ed8a5f4709666bb8b238",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "VehicleCreateFunctionServiceRole212BE77D": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/VehicleCreateFunction/ServiceRole/Resource"
+   }
+  },
+  "VehicleCreateFunctionServiceRoleDefaultPolicy8371DD39": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "VehiculosTableCF842E6B",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "VehiculosTableCF842E6B",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:Scan"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ClientesTable3789C82A",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ClientesTable3789C82A",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "VehicleCreateFunctionServiceRoleDefaultPolicy8371DD39",
+    "Roles": [
+     {
+      "Ref": "VehicleCreateFunctionServiceRole212BE77D"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/VehicleCreateFunction/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "VehicleCreateFunctionF2C1EC2B": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-471112701953-us-east-1",
+     "S3Key": "ffa4327af7e4a4b4130b3afb776aa32497c1aada91b411c3773bd4284f4f84f4.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "CLIENTES_TABLE": {
+       "Ref": "ClientesTable3789C82A"
+      },
+      "VEHICULOS_TABLE": {
+       "Ref": "VehiculosTableCF842E6B"
+      },
+      "ORDENES_TRABAJO_TABLE": {
+       "Ref": "OrdenesTrabajoTable1EF0400C"
+      },
+      "INVENTARIO_TABLE": {
+       "Ref": "InventarioTable83FADDE8"
+      },
+      "FACTURAS_TABLE": {
+       "Ref": "FacturasTable102DC65A"
+      },
+      "DETALLES_TABLE": {
+       "Ref": "DetallesTable28F27DF0"
+      },
+      "USUARIOS_TABLE": {
+       "Ref": "UsuariosTable8B6AF0F5"
+      },
+      "CONFIGURACION_TABLE": {
+       "Ref": "ConfiguracionTableBC5E39F3"
+      },
+      "ROLES_PERMISOS_TABLE": {
+       "Ref": "RolesPermisosTable130D2A0B"
+      },
+      "DOCUMENTS_BUCKET": {
+       "Ref": "DocumentsBucket9EC9DEB9"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      }
+     }
+    },
+    "Handler": "create.lambda_handler",
+    "Layers": [
+     {
+      "Ref": "SharedLayer27DFABF0"
+     }
+    ],
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "VehicleCreateFunctionServiceRole212BE77D",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "VehicleCreateFunctionServiceRoleDefaultPolicy8371DD39",
+    "VehicleCreateFunctionServiceRole212BE77D"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/VehicleCreateFunction/Resource",
+    "aws:asset:path": "asset.ffa4327af7e4a4b4130b3afb776aa32497c1aada91b411c3773bd4284f4f84f4",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "VehicleReadFunctionServiceRole2690355C": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/VehicleReadFunction/ServiceRole/Resource"
+   }
+  },
+  "VehicleReadFunctionServiceRoleDefaultPolicy44F47690": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:Scan"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "VehiculosTableCF842E6B",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "VehiculosTableCF842E6B",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "VehicleReadFunctionServiceRoleDefaultPolicy44F47690",
+    "Roles": [
+     {
+      "Ref": "VehicleReadFunctionServiceRole2690355C"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/VehicleReadFunction/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "VehicleReadFunction491CA780": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-471112701953-us-east-1",
+     "S3Key": "ffa4327af7e4a4b4130b3afb776aa32497c1aada91b411c3773bd4284f4f84f4.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "CLIENTES_TABLE": {
+       "Ref": "ClientesTable3789C82A"
+      },
+      "VEHICULOS_TABLE": {
+       "Ref": "VehiculosTableCF842E6B"
+      },
+      "ORDENES_TRABAJO_TABLE": {
+       "Ref": "OrdenesTrabajoTable1EF0400C"
+      },
+      "INVENTARIO_TABLE": {
+       "Ref": "InventarioTable83FADDE8"
+      },
+      "FACTURAS_TABLE": {
+       "Ref": "FacturasTable102DC65A"
+      },
+      "DETALLES_TABLE": {
+       "Ref": "DetallesTable28F27DF0"
+      },
+      "USUARIOS_TABLE": {
+       "Ref": "UsuariosTable8B6AF0F5"
+      },
+      "CONFIGURACION_TABLE": {
+       "Ref": "ConfiguracionTableBC5E39F3"
+      },
+      "ROLES_PERMISOS_TABLE": {
+       "Ref": "RolesPermisosTable130D2A0B"
+      },
+      "DOCUMENTS_BUCKET": {
+       "Ref": "DocumentsBucket9EC9DEB9"
+      },
+      "USER_POOL_ID": {
+       "Ref": "UserPool6BA7E5F2"
+      }
+     }
+    },
+    "Handler": "read.lambda_handler",
+    "Layers": [
+     {
+      "Ref": "SharedLayer27DFABF0"
+     }
+    ],
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "VehicleReadFunctionServiceRole2690355C",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "VehicleReadFunctionServiceRoleDefaultPolicy44F47690",
+    "VehicleReadFunctionServiceRole2690355C"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/VehicleReadFunction/Resource",
+    "aws:asset:path": "asset.ffa4327af7e4a4b4130b3afb776aa32497c1aada91b411c3773bd4284f4f84f4",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/12QwU7DMAyGn4V7ZsaGuG9DnEBMHXCd3NSUbGlS1S5TFeXdUdIWJk7/5992YnsFq/UDLG/wwgtdnRfWlBAOgvqs8MLHUA0OG1+VEN6wtKR2ny5DVLyGsO31mSSZE42yRaaotK+dEQ/hnanbe29T3S/PsLOGnFynRicqi01ZIYRnHKj7oI6Nd6nuf7ynrjGco6feaZnsmdOkR2QmYdgkUdiaGoUuOEAoiGXTmtQw4yO11g/NNNVVdBCs8wVGKIh932lK26oXki9fpeREc3Z6OXNUBhsIhR8PmXXvrdFD3iNTjH+tedz0mXF1qnjtpe0lKucrghPffq/u4W4Ny5sTG7PoeiemIShG/QGjTRZJ2gEAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "TallerStack-dev/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "TallerApiEndpointF3E1569B": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "TallerApi308E33A6"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "TallerApiDeploymentStageapi0E447E46"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "ApiUrl": {
+   "Description": "API Gateway URL",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "TallerApi308E33A6"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "TallerApiDeploymentStageapi0E447E46"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "UserPoolId": {
+   "Description": "Cognito User Pool ID",
+   "Value": {
+    "Ref": "UserPool6BA7E5F2"
+   }
+  },
+  "UserPoolClientId": {
+   "Description": "Cognito User Pool Client ID",
+   "Value": {
+    "Ref": "UserPoolUserPoolClient40176907"
+   }
+  },
+  "DocumentsBucketName": {
+   "Description": "S3 Bucket for documents",
+   "Value": {
+    "Ref": "DocumentsBucket9EC9DEB9"
+   }
+  },
+  "ApiIdExport": {
+   "Value": {
+    "Ref": "TallerApi308E33A6"
+   },
+   "Export": {
+    "Name": "TallerDemo-dev-ApiId"
+   }
+  },
+  "ClientesTableExport": {
+   "Value": {
+    "Ref": "ClientesTable3789C82A"
+   },
+   "Export": {
+    "Name": "TallerDemo-dev-ClientesTable"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
