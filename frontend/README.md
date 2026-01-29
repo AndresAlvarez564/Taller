@@ -1,109 +1,16 @@
-# Taller Pro - Frontend
+# React + Vite
 
-Sistema de gestión para talleres automotrices construido con React + Vite + TypeScript + TailwindCSS.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## 🚀 Tecnologías
+Currently, two official plugins are available:
 
-- **React 18** - UI Library
-- **Vite** - Build tool (super rápido)
-- **TypeScript** - Type safety
-- **TailwindCSS** - Styling
-- **React Router** - Routing
-- **Zustand** - State management (próximamente)
-- **Lucide React** - Icons
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## 📦 Instalación
+## React Compiler
 
-```bash
-npm install
-```
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## 🏃 Desarrollo
+## Expanding the ESLint configuration
 
-```bash
-npm run dev
-```
-
-El servidor se ejecutará en `http://localhost:5173/`
-
-## 🏗️ Build
-
-```bash
-npm run build
-```
-
-## 📁 Estructura del Proyecto
-
-```
-src/
-├── components/
-│   ├── ui/              # Componentes UI reutilizables
-│   ├── layout/          # Layout, Navbar, Sidebar
-│   └── customers/       # Componentes específicos de clientes
-├── pages/               # Páginas/Vistas
-├── services/            # API calls y mock data
-├── types/               # TypeScript types
-└── utils/               # Helpers
-```
-
-## 🎨 Módulos Implementados
-
-### ✅ Dashboard
-- Vista general con estadísticas
-- Órdenes de trabajo recientes
-- Alertas de stock bajo
-
-### ✅ Clientes
-- Lista de clientes con búsqueda
-- Crear nuevo cliente
-- Editar cliente existente
-- Eliminar cliente (soft delete)
-- Validación de formularios
-
-### 🚧 Próximamente
-- Vehículos
-- Órdenes de Trabajo
-- Inventario
-- Facturas
-- Ventas Rápidas
-- Configuración
-
-## 🔌 Conexión con Backend
-
-Actualmente usa **mock data** para desarrollo.
-
-Para conectar con el API Gateway real:
-
-1. Editar `src/services/api.ts`
-2. Cambiar `USE_MOCK_DATA = false`
-3. Configurar `VITE_API_URL` en `.env`:
-
-```env
-VITE_API_URL=https://tu-api-gateway.amazonaws.com/prod
-```
-
-## 📝 Tipos TypeScript
-
-Todos los tipos están definidos en `src/types/index.ts` basados en la documentación del proyecto:
-
-- Customer
-- Vehicle
-- WorkOrder
-- WorkOrderItem
-- InventoryItem
-- Invoice
-- User
-- TallerConfig
-
-## 🎯 Próximos Pasos
-
-1. Implementar módulo de Vehículos
-2. Implementar módulo de Órdenes de Trabajo
-3. Implementar módulo de Inventario
-4. Agregar autenticación con Cognito
-5. Conectar con API Gateway real
-6. Agregar tests
-
-## 🤝 Contribuir
-
-Este es un proyecto privado para Methodica Technology & Co.
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
