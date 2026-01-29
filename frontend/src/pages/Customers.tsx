@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2 } from 'lucide-react';
-import { Customer } from '../types';
+import type { Customer } from '../types';
 import { customerService } from '../services/customerService';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
+import { Card, CardHeader, CardContent } from '../components/ui/Card';
 import { CustomerForm } from '../components/customers/CustomerForm';
 
 export const Customers: React.FC = () => {

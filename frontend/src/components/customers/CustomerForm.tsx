@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Save } from 'lucide-react';
-import { Customer } from '../../types';
+import type { Customer } from '../../types';
 import { customerService } from '../../services/customerService';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
