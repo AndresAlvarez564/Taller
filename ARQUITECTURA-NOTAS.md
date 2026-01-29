@@ -98,16 +98,17 @@ El diagrama organiza las lambdas en 6 módulos funcionales:
 
 ## 🔒 Consideraciones de Seguridad en la Arquitectura
 
-### 1. Multi-tenancy
-**CRÍTICO:** Cada taller es un tenant separado.
+### 1. Modelo de Despliegue - Infraestructura Aislada por Taller
+**IMPORTANTE:** Cada taller tiene su propia infraestructura AWS completamente separada.
 
-- **tallerId** debe estar en el JWT token de Cognito como custom attribute
-- Todas las lambdas filtran por tallerId
-- Aislamiento lógico de datos (no físico)
+- **NO es multi-tenancy** (no se comparten recursos entre talleres)
+- Cada taller = 1 stack completo de AWS (lambdas, DynamoDB, S3, etc.)
+- Aislamiento físico total (diferentes cuentas AWS o diferentes regiones)
+- Se usa **IaC (Infrastructure as Code)** para replicar la infraestructura fácilmente
 
 ### 2. Autenticación y Autorización
-- **Cognito User Pools**: Maneja usuarios y autenticación
-- **JWT Tokens**: Incluyen tallerId y rol del usuario
+- **Cognito User Pools**: Maneja usuarios y autenticación (uno por taller)
+- **JWT Tokens**: Incluyen rol del usuario
 - **API Gateway Authorizer**: Valida tokens antes de invocar lambdas
 - **Tabla RolesPermisos**: Define permisos granulares por rol
 
@@ -123,11 +124,11 @@ El diagrama organiza las lambdas en 6 módulos funcionales:
 ### 1. DynamoDB
 - **On-Demand Billing**: Escala automáticamente sin provisionar capacidad
 - **GSI (Global Secondary Indexes)**: Para queries eficientes
-  - tallerId-nombre-index (Clientes)
-  - tallerId-placa-index (Vehiculos)
-  - tallerId-estado-fechaIngreso-index (OrdenesTrabajo)
-  - tallerId-numeroFactura-index (Facturas)
-  - tallerId-SKU-index (InventarioItems)
+  - nombre-index (Clientes)
+  - placa-index (Vehiculos)
+  - estado-fechaIngreso-index (OrdenesTrabajo)
+  - numeroFactura-index (Facturas)
+  - SKU-index (InventarioItems)
 
 ### 2. Lambda
 - **Provisioned Concurrency** (opcional): Para lambdas críticas (Factura-Create)
@@ -326,72 +327,93 @@ fields @timestamp, inventarioItemId, stock
 
 **Total estimado: $7-15/mes por taller**
 
-### Escenario: 10 talleres (multi-tenant)
-- Lambda: ~$5/mes
-- DynamoDB: ~$50-80/mes
-- S3: ~$5/mes
-- CloudFront: ~$10-15/mes
-- API Gateway: ~$2/mes
-- Cognito: ~$10/mes (1000 usuarios)
+### Escenario: 10 talleres (infraestructura replicada)
+- Lambda: ~$5/mes × 10 = $50/mes
+- DynamoDB: ~$7/mes × 10 = $70/mes
+- S3: ~$0.50/mes × 10 = $5/mes
+- CloudFront: ~$1.50/mes × 10 = $15/mes
+- API Gateway: ~$0.20/mes × 10 = $2/mes
+- Cognito: Gratis × 10 = $0/mes
 
-**Total estimado: $82-117/mes para 10 talleres**
+**Total estimado: $142/mes para 10 talleres**
 
-**Costo por taller: $8-12/mes**
+**Costo por taller: ~$14/mes**
+
+**Ventajas de este modelo:**
+- Aislamiento total de datos (seguridad)
+- Fallo en un taller no afecta a otros
+- Personalización por taller sin afectar otros
+- Cumplimiento de regulaciones de privacidad más fácil
 
 ---
 
 ## 🚀 Plan de Despliegue
 
-### Fase 1: Infraestructura Base (Semana 1-2)
-- [ ] Crear VPC (opcional, para mayor seguridad)
+### Fase 0: Desarrollo de IaC (Semana 1-2)
+- [ ] Crear template de IaC (AWS CDK o Terraform)
+- [ ] Definir todos los recursos AWS como código
+- [ ] Parametrizar configuraciones por taller (nombre, dominio, región)
+- [ ] Crear scripts de despliegue automatizado
+- [ ] Documentar proceso de replicación
+
+### Fase 1: Infraestructura Base - Taller Piloto (Semana 3-4)
+- [ ] Desplegar stack completo usando IaC
 - [ ] Configurar Cognito User Pool
 - [ ] Crear tablas DynamoDB con GSIs
 - [ ] Configurar S3 buckets (website + PDFs)
 - [ ] Configurar CloudFront distributions
 - [ ] Configurar Route 53 (DNS)
 
-### Fase 2: Lambdas Core (Semana 3-4)
+### Fase 2: Lambdas Core (Semana 5-6)
 - [ ] Customer (CRUD)
 - [ ] Vehicles (CRUD)
 - [ ] WorkOrder (CRUD + UpdateState)
 - [ ] Admin (Users, Settings, Roles)
 
-### Fase 3: Inventario y Items (Semana 5-6)
+### Fase 3: Inventario y Items (Semana 7-8)
 - [ ] Inventario (CRUD + Movimientos)
 - [ ] WorkOrderItem (Add/Update/Delete con transacciones)
 - [ ] Validaciones de stock
 
-### Fase 4: Facturación (Semana 7-8)
+### Fase 4: Facturación (Semana 9-10)
 - [ ] Factura-Create (con transacciones)
 - [ ] Factura-generarPDF
 - [ ] Factura-getPdfUrl
 - [ ] VentaRapida (con transacciones)
 - [ ] Factura-Anular, RegistrarPago
 
-### Fase 5: Frontend (Semana 9-12)
+### Fase 5: Frontend (Semana 11-14)
 - [ ] Módulo de recepción (tablet)
 - [ ] Módulo de órdenes de trabajo
 - [ ] Módulo de inventario
 - [ ] Módulo de facturación
 - [ ] Módulo de administración
 
-### Fase 6: Testing y Optimización (Semana 13-14)
+### Fase 6: Testing y Optimización (Semana 15-16)
 - [ ] Testing de carga
 - [ ] Testing de concurrencia
 - [ ] Optimización de queries
 - [ ] Configurar monitoreo y alarmas
 
-### Fase 7: Producción (Semana 15-16)
+### Fase 7: Producción - Taller Piloto (Semana 17-18)
 - [ ] Migración de datos desde Excel
 - [ ] Capacitación de usuarios
 - [ ] Go-live con taller piloto
 - [ ] Monitoreo intensivo primera semana
 
+### Fase 8: Replicación a Otros Talleres (Semana 19+)
+- [ ] Usar IaC para desplegar stack completo para nuevo taller
+- [ ] Personalizar configuraciones (dominio, nombre, región)
+- [ ] Migrar datos del nuevo taller
+- [ ] Capacitación de usuarios del nuevo taller
+- [ ] Go-live
+
+**Tiempo estimado por taller adicional:** 1-2 semanas (gracias a IaC)
+
 ---
 
 ## 📝 Checklist de Seguridad Pre-Producción
 
-- [ ] Todas las lambdas validan tallerId del JWT
 - [ ] Todas las lambdas validan permisos por rol
 - [ ] Conditional writes implementados en operaciones críticas
 - [ ] TransactWriteItems usado en operaciones multi-tabla
@@ -408,12 +430,169 @@ fields @timestamp, inventarioItemId, stock
 
 ---
 
-## 🔧 Herramientas de Desarrollo Recomendadas
+---
 
-### IaC (Infrastructure as Code)
-- **AWS CDK** (TypeScript/Python): Para definir toda la infraestructura
+## 🏗️ MODELO DE INFRAESTRUCTURA Y PARTNERSHIP
+
+### Arquitectura: Infraestructura Aislada por Taller
+
+**Cada taller obtiene:**
+- Su propia cuenta AWS (o subcuenta con AWS Organizations)
+- Stack completo de recursos AWS independiente
+- Base de datos completamente separada
+- Dominio propio (ej: taller-experto.tuapp.com)
+- Usuarios y configuraciones propias
+
+**Ventajas de este modelo:**
+1. **Seguridad máxima**: Datos completamente aislados
+2. **Cumplimiento**: Más fácil cumplir regulaciones de privacidad
+3. **Personalización**: Cada taller puede tener features custom sin afectar otros
+4. **Resiliencia**: Fallo en un taller no afecta a otros
+5. **Escalabilidad**: Cada taller escala independientemente
+6. **Facturación clara**: Costos AWS separados por taller
+
+**Desventajas (mitigadas con IaC):**
+1. ~~Despliegue lento~~ → IaC automatiza todo (15-30 min por taller)
+2. ~~Mantenimiento complejo~~ → Actualizaciones se aplican con IaC a todos
+3. ~~Costo mayor~~ → Mínimo ($14/mes vs $8/mes), pero vale la pena por seguridad
+
+---
+
+### Infrastructure as Code (IaC) - Pieza Clave
+
+**¿Qué es IaC?**
+- Definir toda la infraestructura AWS como código (no clicks en consola)
+- Versionado en Git
+- Replicable, consistente, auditable
+
+**Ejemplo con AWS CDK (TypeScript):**
+
+```typescript
+// stack-taller.ts
+export class TallerStack extends Stack {
+  constructor(scope: Construct, id: string, props: TallerStackProps) {
+    super(scope, id, props);
+    
+    // Parámetros por taller
+    const tallerName = props.tallerName; // "Taller El Experto"
+    const domain = props.domain; // "taller-experto.tuapp.com"
+    const region = props.region; // "us-east-1"
+    
+    // DynamoDB Tables
+    const clientesTable = new Table(this, 'Clientes', {
+      partitionKey: { name: 'clienteId', type: AttributeType.STRING },
+      billingMode: BillingMode.PAY_PER_REQUEST,
+      pointInTimeRecovery: true,
+    });
+    
+    // Lambdas
+    const customerCreateLambda = new Function(this, 'CustomerCreate', {
+      runtime: Runtime.NODEJS_18_X,
+      handler: 'index.handler',
+      code: Code.fromAsset('lambdas/customer-create'),
+      environment: {
+        CLIENTES_TABLE: clientesTable.tableName,
+      },
+    });
+    
+    // API Gateway
+    const api = new RestApi(this, 'TallerAPI', {
+      restApiName: `${tallerName} API`,
+    });
+    
+    // ... más recursos
+  }
+}
+```
+
+**Desplegar nuevo taller:**
+```bash
+# Configurar parámetros
+export TALLER_NAME="Taller El Experto"
+export DOMAIN="taller-experto.tuapp.com"
+export AWS_REGION="us-east-1"
+
+# Desplegar stack completo
+cdk deploy TallerElExpertoStack
+
+# ¡Listo! Infraestructura completa en 15-30 minutos
+```
+
+**Actualizar todos los talleres:**
+```bash
+# Cambio en código (ej: nueva lambda)
+git commit -m "feat: agregar lambda de reportes"
+
+# Desplegar a todos los talleres
+./scripts/deploy-all-talleres.sh
+
+# Script aplica cambios a cada stack automáticamente
+```
+
+---
+
+### Modelo de Partnership y Comercialización
+
+**Taller Piloto (Cliente Inicial):**
+- Paga desarrollo inicial (inversión única)
+- Obtiene sistema completo funcional
+- Se convierte en socio estratégico
+- Beneficios:
+  - Descuento permanente (50% off mensualidad)
+  - Comisión por referidos (10-20% de mensualidad)
+  - Prioridad en nuevas features
+  - Voz en roadmap del producto
+
+**Talleres Adicionales:**
+- Pagan solo mensualidad (SaaS)
+- Infraestructura desplegada en días (gracias a IaC)
+- Migración de datos incluida
+- Capacitación incluida
+- Soporte técnico
+
+**Modelo de Precios Sugerido:**
+
+| Concepto | Taller Piloto | Talleres Nuevos |
+|----------|---------------|-----------------|
+| Desarrollo inicial | $5,000-10,000 | $0 |
+| Setup/Despliegue | Incluido | $500 |
+| Mensualidad | $50/mes (50% off) | $99/mes |
+| Costos AWS | ~$14/mes | ~$14/mes |
+| Migración datos | Incluido | Incluido |
+| Capacitación | Incluido | Incluido |
+| Soporte | Prioritario | Estándar |
+
+**Comisiones para Taller Piloto:**
+- Por cada taller referido que contrate: 15% de mensualidad recurrente
+- Ejemplo: 5 talleres referidos = 5 × $99 × 15% = $74/mes pasivo
+
+**Escalabilidad del Negocio:**
+- 10 talleres = $990/mes ingresos - $140/mes AWS = $850/mes neto
+- 50 talleres = $4,950/mes ingresos - $700/mes AWS = $4,250/mes neto
+- 100 talleres = $9,900/mes ingresos - $1,400/mes AWS = $8,500/mes neto
+
+**Ventajas de este modelo:**
+- Taller piloto recupera inversión con referidos
+- Methodica escala ingresos sin escalar desarrollo
+- Cada taller paga sus propios costos AWS
+- Margen alto (85-90%) después de desarrollo inicial
+
+---
+
+## 🔧 HERRAMIENTAS DE DESARROLLO RECOMENDADAS
+
+### IaC (Infrastructure as Code) - **CRÍTICO PARA ESTE PROYECTO**
+- **AWS CDK** (TypeScript/Python): **RECOMENDADO** - Para definir toda la infraestructura como código
+- **Terraform**: Alternativa popular, multi-cloud
 - **AWS SAM**: Para desarrollo y testing local de lambdas
 - **Serverless Framework**: Alternativa a SAM
+
+**Ventajas de usar IaC:**
+- Replicar infraestructura completa en minutos (no días)
+- Consistencia entre talleres
+- Versionado de infraestructura (Git)
+- Rollback fácil si algo falla
+- Documentación automática de la arquitectura
 
 ### Testing
 - **Jest**: Unit tests para lambdas
