@@ -11,7 +11,9 @@ FACTURAS_TABLE = TABLES['FACTURAS']
 def lambda_handler(event, context):
     try:
         # GET /invoices/{id}
-        factura_id = event.get('pathParameters', {}).get('id')
+        path_params = event.get('pathParameters') or {}
+        factura_id = path_params.get('facturaId')
+        
         if factura_id:
             factura = get_item(FACTURAS_TABLE, {'facturaId': factura_id})
             if not factura:
