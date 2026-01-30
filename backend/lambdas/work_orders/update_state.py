@@ -1,18 +1,24 @@
+"""
+Lambda: Work Order Update State
+Cambia el estado de una orden de trabajo
+"""
 import json
 import os
+import sys
 from datetime import datetime
-from shared.db_utils import get_item, update_item, query_items
-from shared.response_utils import success, error, not_found, validation_error, conflict
-from shared.validators import validate_workorder_state
+from decimal import Decimal
 
-ORDENES_TABLE = os.environ['ORDENES_TRABAJO_TABLE']
-DETALLES_TABLE = os.environ['DETALLES_TABLE']
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'shared'))
+
+from db_utils import get_item, update_item, TABLES
+from response_utils import success, validation_error, not_found, server_error
+from validation_utils import validate_workorder_state
 
 # Flujo válido de estados
 FLUJO_ESTADOS = {
     'en_revision': ['en_cotizacion', 'cancelado'],
-    'en_cotizacion': ['en_aprobacion', 'en_revision', 'cancelado'],
-    'en_aprobacion': ['aprobado', 'en_cotizacion', 'cancelado'],
+    'en_cotizacion': ['en_aprobacion', 'cancelado'],
+    'en_aprobacion': ['aprobado', 'cancelado'],
     'aprobado': ['en_proceso', 'cancelado'],
     'en_proceso': ['terminado', 'cancelado'],
     'terminado': ['facturado'],
@@ -23,7 +29,9 @@ FLUJO_ESTADOS = {
 def lambda_handler(event, context):
     try:
         # Extraer workOrderId del path
-        ot_id = event.get('pathParameters', {}).get('id')
+        path_params = event.get('pathParameters') or {}
+        ot_id = path_params.get('workOrderId')
+        
         if not ot_id:
             return validation_error('workOrderId es requerido')
         
@@ -38,52 +46,53 @@ def lambda_handler(event, context):
             return validation_error(f'Estado inválido: {nuevo_estado}')
         
         # Obtener OT actual
-        orden = get_item(ORDENES_TABLE, {'workOrderId': ot_id})
+        orden = get_item(TABLES['ORDENES_TRABAJO'], {'workOrderId': ot_id})
         if not orden:
-            return not_found('Orden de trabajo no encontrada')
+            return not_found('Orden de trabajo')
         
         estado_actual = orden.get('estado')
         
         # Validar transición de estado
         estados_permitidos = FLUJO_ESTADOS.get(estado_actual, [])
         if nuevo_estado not in estados_permitidos:
-            return conflict(
+            return validation_error(
                 f'No se puede cambiar de "{estado_actual}" a "{nuevo_estado}". '
                 f'Estados permitidos: {", ".join(estados_permitidos) if estados_permitidos else "ninguno"}'
             )
         
-        # Validaciones especiales
-        if nuevo_estado == 'aprobado':
-            # Verificar que tenga items activos
-            items = query_items(
-                DETALLES_TABLE,
-                key_condition='PK = :pk AND begins_with(SK, :sk_prefix)',
-                expr_values={
-                    ':pk': f'OT#{ot_id}',
-                    ':sk_prefix': 'ITEM#'
-                }
-            )
-            items_activos = [i for i in items if i.get('activo', True)]
-            if not items_activos:
-                return conflict('No se puede aprobar una orden sin items')
+        # Preparar actualizaciones básicas
+        now = datetime.utcnow().isoformat() + 'Z'
+        updates = {
+            'estado': nuevo_estado,
+            'actualizadoEn': now
+        }
         
-        # Actualizar estado
+        # Agregar información adicional según el estado de origen
+        if estado_actual == 'en_revision' and 'diagnostico' in body:
+            updates['diagnostico'] = body['diagnostico'].strip()
+            if 'observacionesRevision' in body:
+                updates['observacionesRevision'] = body['observacionesRevision'].strip()
+        
+        if estado_actual == 'en_aprobacion' and 'notasAprobacion' in body:
+            updates['notasAprobacion'] = body['notasAprobacion'].strip()
+        
+        if estado_actual == 'terminado':
+            if 'metodoPago' in body:
+                updates['metodoPago'] = body['metodoPago']
+            if 'montoPagado' in body:
+                updates['montoPagado'] = Decimal(str(body['montoPagado']))
+        
+        # Actualizar
         updated = update_item(
-            ORDENES_TABLE,
+            TABLES['ORDENES_TRABAJO'],
             {'workOrderId': ot_id},
-            'SET estado = :estado, actualizadoEn = :now',
-            {
-                ':estado': nuevo_estado,
-                ':now': datetime.utcnow().isoformat()
-            }
+            updates
         )
         
-        return success({
-            'mensaje': f'Estado actualizado de "{estado_actual}" a "{nuevo_estado}"',
-            'orden': updated
-        })
+        return success(updated)
         
     except json.JSONDecodeError:
         return validation_error('JSON inválido')
     except Exception as e:
-        return error(str(e))
+        print(f'Error updating work order state: {str(e)}')
+        return server_error('Error al actualizar estado de orden de trabajo', str(e))

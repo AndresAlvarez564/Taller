@@ -4,49 +4,83 @@ Obtiene uno o todos los clientes
 """
 import json
 import os
-import sys
+import boto3
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'shared'))
-
-from db_utils import get_item, get_table, TABLES
-from response_utils import success, not_found, server_error
-
+# Cliente DynamoDB
+dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 
 def lambda_handler(event, context):
     """
     Handler principal del lambda
-    
-    GET /customers/{clienteId} - Obtener un cliente específico
-    GET /customers - Listar todos los clientes
     """
     try:
+        # Obtener nombre de tabla
+        table_name = os.environ.get('CLIENTES_TABLE', 'TallerDemo-dev-Clientes')
+        table = dynamodb.Table(table_name)
+        
         # Obtener clienteId de path parameters
         path_params = event.get('pathParameters') or {}
         cliente_id = path_params.get('clienteId')
         
         if cliente_id:
             # Obtener un cliente específico
-            customer = get_item(TABLES['CLIENTES'], {'clienteId': cliente_id})
+            response = table.get_item(Key={'clienteId': cliente_id})
+            customer = response.get('Item')
             
             if not customer:
-                return not_found('Cliente')
+                return {
+                    'statusCode': 404,
+                    'headers': {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    },
+                    'body': json.dumps({
+                        'success': False,
+                        'mensaje': 'Cliente no encontrado'
+                    })
+                }
             
-            # Filtrar clientes eliminados (soft delete)
-            if customer.get('eliminadoEn'):
-                return not_found('Cliente')
-            
-            return success(customer)
+            return {
+                'statusCode': 200,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                'body': json.dumps({
+                    'success': True,
+                    'data': customer
+                }, default=str)
+            }
         else:
-            # Listar todos los clientes activos
-            table = get_table(TABLES['CLIENTES'])
+            # Listar todos los clientes
             response = table.scan()
             customers = response.get('Items', [])
             
             # Filtrar solo activos
             customers = [c for c in customers if c.get('activo', False)]
             
-            return success(customers)
+            return {
+                'statusCode': 200,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                'body': json.dumps({
+                    'success': True,
+                    'data': customers
+                }, default=str)
+            }
         
     except Exception as e:
-        print(f'Error reading customer: {str(e)}')
-        return server_error('Error al obtener cliente(s)', str(e))
+        print(f'Error: {str(e)}')
+        return {
+            'statusCode': 500,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps({
+                'success': False,
+                'mensaje': f'Error interno: {str(e)}'
+            })
+        }

@@ -1,60 +1,84 @@
+"""
+Lambda: Inventory Read
+Obtiene uno o todos los items de inventario
+"""
 import json
 import os
-import sys
+import boto3
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'shared'))
-
-from db_utils import get_item, get_table, TABLES
-from response_utils import success, not_found, server_error
+# Cliente DynamoDB
+dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 
 def lambda_handler(event, context):
+    """
+    Handler principal del lambda
+    """
     try:
-        # GET /inventory/{inventarioItemId}
+        # Obtener nombre de tabla
+        table_name = os.environ.get('INVENTARIO_TABLE', 'TallerDemo-dev-InventarioItems')
+        table = dynamodb.Table(table_name)
+        
+        # Obtener inventarioItemId de path parameters
         path_params = event.get('pathParameters') or {}
         item_id = path_params.get('inventarioItemId')
         
         if item_id:
-            item = get_item(TABLES['INVENTARIO'], {'inventarioItemId': item_id})
+            # Obtener un item específico
+            response = table.get_item(Key={'inventarioItemId': item_id})
+            item = response.get('Item')
+            
             if not item or not item.get('activo', False):
-                return not_found('Item de inventario')
-            return success(item)
-        
-        # GET /inventory?search=xxx&stockBajo=true
-        params = event.get('queryStringParameters') or {}
-        search = params.get('search', '').lower()
-        stock_bajo = params.get('stockBajo') == 'true'
-        include_inactive = params.get('includeInactive') == 'true'
-        
-        # Escanear items
-        table = get_table(TABLES['INVENTARIO'])
-        response = table.scan()
-        items = response.get('Items', [])
-        
-        # Filtrar activos
-        if not include_inactive:
+                return {
+                    'statusCode': 404,
+                    'headers': {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    },
+                    'body': json.dumps({
+                        'success': False,
+                        'mensaje': 'Item no encontrado'
+                    })
+                }
+            
+            return {
+                'statusCode': 200,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                'body': json.dumps({
+                    'success': True,
+                    'data': item
+                }, default=str)
+            }
+        else:
+            # Listar todos los items
+            response = table.scan()
+            items = response.get('Items', [])
             items = [i for i in items if i.get('activo', False)]
-        
-        # Filtrar por búsqueda (nombre, SKU, descripción)
-        if search:
-            items = [
-                i for i in items
-                if search in i.get('nombre', '').lower()
-                or search in i.get('sku', '').lower()
-                or search in i.get('descripcion', '').lower()
-            ]
-        
-        # Filtrar por stock bajo
-        if stock_bajo:
-            items = [
-                i for i in items
-                if i.get('stock', 0) <= i.get('stockMinimo', 0)
-            ]
-        
-        # Ordenar por nombre
-        items.sort(key=lambda x: x.get('nombre', ''))
-        
-        return success(items)
+            
+            return {
+                'statusCode': 200,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                'body': json.dumps({
+                    'success': True,
+                    'data': items
+                }, default=str)
+            }
         
     except Exception as e:
-        print(f'Error reading inventory: {str(e)}')
-        return server_error('Error al obtener inventario', str(e))
+        print(f'Error: {str(e)}')
+        return {
+            'statusCode': 500,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps({
+                'success': False,
+                'mensaje': f'Error interno: {str(e)}'
+            })
+        }
