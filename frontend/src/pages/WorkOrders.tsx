@@ -410,16 +410,16 @@ export default function WorkOrders() {
   );
 }
 
-function WorkOrderDetails({ order, onClose, onChangeState }: {
+function WorkOrderDetails({ order, onClose, onChangeState, onRefresh }: {
   order: OrdenTrabajo;
   onClose: () => void;
   onChangeState: (orderId: string, newState: string) => void;
+  onRefresh: () => void;
 }) {
   const [showTransitionForm, setShowTransitionForm] = useState(false);
   const [items, setItems] = useState<any[]>([]);
   const [diagnostico, setDiagnostico] = useState('');
   const [observacionesRevision, setObservacionesRevision] = useState('');
-  const [notasAprobacion, setNotasAprobacion] = useState('');
   const [metodoPago, setMetodoPago] = useState('efectivo');
   const [montoPagado, setMontoPagado] = useState(0);
 
@@ -497,10 +497,6 @@ function WorkOrderDetails({ order, onClose, onChangeState }: {
         }
       }
       
-      if (order.estado === 'en_aprobacion' && notasAprobacion) {
-        additionalData.notasAprobacion = notasAprobacion;
-      }
-      
       if (order.estado === 'terminado') {
         additionalData.metodoPago = metodoPago;
         additionalData.montoPagado = montoPagado;
@@ -514,7 +510,9 @@ function WorkOrderDetails({ order, onClose, onChangeState }: {
       onClose();
       
       // Recargar la página para ver cambios
-      window.location.reload();
+      if (onRefresh) {
+        onRefresh();
+      }
       
     } catch (error: any) {
       console.error('Error en transición:', error);
