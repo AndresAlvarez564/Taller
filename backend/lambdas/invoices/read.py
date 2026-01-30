@@ -18,7 +18,7 @@ def lambda_handler(event, context):
             factura = get_item(FACTURAS_TABLE, {'facturaId': factura_id})
             if not factura:
                 return not_found('Factura no encontrada')
-            return success({'factura': factura})
+            return success(factura)
         
         # GET /invoices?estado=xxx&tipo=xxx&numeroFactura=xxx
         params = event.get('queryStringParameters') or {}
@@ -63,10 +63,7 @@ def lambda_handler(event, context):
         # Ordenar por fecha de creación (más recientes primero)
         facturas.sort(key=lambda x: x.get('creadoEn', ''), reverse=True)
         
-        return success({
-            'facturas': facturas,
-            'total': len(facturas)
-        })
+        return success(facturas)
         
     except Exception as e:
         print(f'Error reading invoices: {str(e)}')
