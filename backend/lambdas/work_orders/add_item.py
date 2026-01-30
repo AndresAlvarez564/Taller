@@ -1,29 +1,40 @@
+"""
+Lambda: Work Order Add Item
+Agrega un item (servicio o repuesto) a una orden de trabajo
+"""
 import json
 import os
+import sys
 import uuid
 from datetime import datetime
-from shared.db_utils import get_item, query_items, transact_write
-from shared.response_utils import success, error, not_found, validation_error, conflict
-from shared.validators import validate_positive_number
+from decimal import Decimal
 
-ORDENES_TABLE = os.environ['ORDENES_TRABAJO_TABLE']
-DETALLES_TABLE = os.environ['DETALLES_TABLE']
-INVENTARIO_TABLE = os.environ['INVENTARIO_ITEMS_TABLE']
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'shared'))
+
+from db_utils import get_item, put_item, TABLES
+from response_utils import success, not_found, validation_error, server_error
+from validation_utils import validate_positive_number
 
 def lambda_handler(event, context):
     try:
+        # Extraer workOrderId del path
+        path_params = event.get('pathParameters') or {}
+        ot_id = path_params.get('workOrderId')
+        
+        if not ot_id:
+            return validation_error('workOrderId es requerido')
+        
         body = json.loads(event.get('body', '{}'))
         
         # Validar campos requeridos
-        required = ['workOrderId', 'tipo', 'descripcion', 'cantidad', 'precioUnitario']
+        required = ['tipo', 'descripcion', 'cantidad', 'precioUnitario']
         for field in required:
             if field not in body:
                 return validation_error(f'{field} es requerido')
         
-        ot_id = body['workOrderId']
         tipo = body['tipo']  # servicio, repuesto
         cantidad = int(body['cantidad'])
-        precio = float(body['precioUnitario'])
+        precio = Decimal(str(body['precioUnitario']))
         
         # Validar tipo
         if tipo not in ['servicio', 'repuesto']:
@@ -32,114 +43,61 @@ def lambda_handler(event, context):
         if not validate_positive_number(cantidad):
             return validation_error('Cantidad debe ser positiva')
         
-        if not validate_positive_number(precio):
+        if not validate_positive_number(float(precio)):
             return validation_error('Precio unitario debe ser positivo')
         
-        # Verificar que la OT existe y no está bloqueada
-        orden = get_item(ORDENES_TABLE, {'workOrderId': ot_id})
+        # Verificar que la OT existe y no está facturada
+        orden = get_item(TABLES['ORDENES_TRABAJO'], {'workOrderId': ot_id})
         if not orden:
-            return not_found('Orden de trabajo no encontrada')
+            return not_found('Orden de trabajo')
         
-        if orden.get('bloquearItems', False):
-            return conflict('No se pueden agregar items a una orden facturada')
+        if orden.get('estado') == 'facturado':
+            return validation_error('No se pueden agregar items a una orden facturada')
         
         # Generar ID del item
         item_id = str(uuid.uuid4())
-        now = datetime.utcnow().isoformat()
+        now = datetime.utcnow().isoformat() + 'Z'
         
-        # Construir item
+        # Construir item usando patrón PK/SK para tabla Detalles
         item = {
-            'PK': f'OT#{ot_id}',
+            'PK': f'WO#{ot_id}',
             'SK': f'ITEM#{now}#{item_id}',
             'itemId': item_id,
+            'workOrderId': ot_id,
             'tipo': tipo,
             'descripcion': body['descripcion'].strip(),
             'cantidad': cantidad,
             'precioUnitario': precio,
-            'subtotal': cantidad * precio,
+            'subtotal': Decimal(str(cantidad)) * precio,
             'activo': True,
             'creadoEn': now
         }
         
-        # Preparar transacciones
-        transacciones = []
-        
-        # Si es repuesto con inventarioItemId, manejar stock
+        # Si es repuesto con inventarioItemId, validar que existe
         if tipo == 'repuesto' and 'inventarioItemId' in body:
             inv_id = body['inventarioItemId']
             item['inventarioItemId'] = inv_id
             
-            # Obtener item de inventario
-            inv_item = get_item(INVENTARIO_TABLE, {'inventarioItemId': inv_id})
+            # Obtener item de inventario (usar INVENTARIO, no INVENTARIO_ITEMS)
+            inv_item = get_item(TABLES['INVENTARIO'], {'inventarioItemId': inv_id})
             if not inv_item or not inv_item.get('activo', False):
-                return not_found('Item de inventario no encontrado')
-            
-            stock_actual = inv_item.get('stock', 0)
-            version_actual = inv_item.get('version', 1)
-            
-            # Validar stock suficiente
-            if stock_actual < cantidad:
-                return conflict(f'Stock insuficiente. Disponible: {stock_actual}, Solicitado: {cantidad}')
-            
-            nuevo_stock = stock_actual - cantidad
-            
-            # Transacción 1: Actualizar stock
-            transacciones.append({
-                'Update': {
-                    'TableName': INVENTARIO_TABLE,
-                    'Key': {'inventarioItemId': inv_id},
-                    'UpdateExpression': 'SET stock = :nuevo, version = :nueva_version, actualizadoEn = :now',
-                    'ConditionExpression': 'version = :version_actual',
-                    'ExpressionAttributeValues': {
-                        ':nuevo': nuevo_stock,
-                        ':nueva_version': version_actual + 1,
-                        ':version_actual': version_actual,
-                        ':now': now
-                    }
-                }
-            })
-            
-            # Transacción 2: Crear movimiento de salida
-            mov_id = str(uuid.uuid4())
-            movimiento = {
-                'PK': f'INV#{inv_id}',
-                'SK': f'MOV#{now}#{mov_id}',
-                'movimientoId': mov_id,
-                'tipo': 'salida',
-                'cantidad': cantidad,
-                'stockAntes': stock_actual,
-                'stockDespues': nuevo_stock,
-                'motivo': f'Orden de trabajo #{ot_id}',
-                'referenciaId': ot_id,
-                'creadoEn': now
-            }
-            transacciones.append({
-                'Put': {
-                    'TableName': DETALLES_TABLE,
-                    'Item': movimiento
-                }
-            })
+                return not_found('Item de inventario')
         
-        # Transacción 3: Crear item de OT
-        transacciones.append({
-            'Put': {
-                'TableName': DETALLES_TABLE,
-                'Item': item
-            }
-        })
+        # Crear item de OT en tabla Detalles
+        put_item(TABLES['DETALLES'], item)
         
-        # Ejecutar transacción atómica
-        transact_write(transacciones)
+        # Convertir Decimal a float para respuesta
+        response_item = {
+            **item,
+            'precioUnitario': float(item['precioUnitario']),
+            'subtotal': float(item['subtotal'])
+        }
         
-        return success({
-            'mensaje': 'Item agregado exitosamente',
-            'itemId': item_id,
-            'item': item
-        }, status_code=201)
+        return success(response_item)
         
     except json.JSONDecodeError:
         return validation_error('JSON inválido')
     except Exception as e:
-        if 'ConditionalCheckFailed' in str(e):
-            return conflict('El stock fue modificado por otra operación. Intente nuevamente.')
-        return error(str(e))
+        print(f'Error adding item to work order: {str(e)}')
+        return server_error('Error al agregar item a orden de trabajo', str(e))
+
