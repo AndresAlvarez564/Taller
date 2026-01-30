@@ -515,7 +515,7 @@ export class TallerStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(15),
       memorySize: 256,
     });
-    ordenesTrabajoTable.grantReadData(workOrderAddItemLambda);
+    ordenesTrabajoTable.grantReadWriteData(workOrderAddItemLambda);
     detallesTable.grantReadWriteData(workOrderAddItemLambda);
     inventarioTable.grantReadWriteData(workOrderAddItemLambda);
 
