@@ -423,6 +423,13 @@ function WorkOrderDetails({ order, onClose, onChangeState }: {
   const [metodoPago, setMetodoPago] = useState('efectivo');
   const [montoPagado, setMontoPagado] = useState(0);
 
+  // Inicializar monto pagado con el total de la orden cuando esté en estado terminado
+  useEffect(() => {
+    if (order.estado === 'terminado' && order.total > 0) {
+      setMontoPagado(order.total);
+    }
+  }, [order.estado, order.total]);
+
   const getNextState = (currentState: string): string | null => {
     const transitions: Record<string, string> = {
       en_revision: 'en_cotizacion',
@@ -463,11 +470,6 @@ function WorkOrderDetails({ order, onClose, onChangeState }: {
 
     if (order.estado === 'en_cotizacion' && items.length === 0) {
       alert('Debe agregar al menos un servicio o repuesto para la cotización');
-      return;
-    }
-
-    if (order.estado === 'terminado' && montoPagado <= 0) {
-      alert('Debe ingresar el monto pagado');
       return;
     }
 
@@ -772,8 +774,49 @@ function WorkOrderDetails({ order, onClose, onChangeState }: {
               {order.estado === 'terminado' && (
                 <div>
                   <p style={{ marginBottom: '1rem', color: '#718096' }}>
-                    ¿El cliente ha pagado el servicio? Al continuar, se marcará como facturado.
+                    Registrar el pago del servicio. Al continuar, se marcará como facturado.
                   </p>
+                  
+                  <div style={{ marginBottom: '1rem' }}>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>
+                      Total a Pagar
+                    </label>
+                    <input
+                      type="text"
+                      value={`Bs. ${order.total.toFixed(2)}`}
+                      readOnly
+                      style={{
+                        width: '100%',
+                        padding: '0.5rem',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '4px',
+                        background: '#f7fafc',
+                        fontWeight: 'bold',
+                        fontSize: '1.1rem'
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ marginBottom: '1rem' }}>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>
+                      Método de Pago
+                    </label>
+                    <select
+                      value={metodoPago}
+                      onChange={(e) => setMetodoPago(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '0.5rem',
+                        border: '1px solid #cbd5e0',
+                        borderRadius: '4px'
+                      }}
+                    >
+                      <option value="efectivo">Efectivo</option>
+                      <option value="tarjeta">Tarjeta</option>
+                      <option value="transferencia">Transferencia</option>
+                      <option value="qr">QR</option>
+                    </select>
+                  </div>
                 </div>
               )}
 
