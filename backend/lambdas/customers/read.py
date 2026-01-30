@@ -8,7 +8,7 @@ import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'shared'))
 
-from db_utils import get_item, scan_items, TABLES
+from db_utils import get_item, get_table, TABLES
 from response_utils import success, not_found, server_error
 
 
@@ -38,11 +38,12 @@ def lambda_handler(event, context):
             return success(customer)
         else:
             # Listar todos los clientes activos
-            customers = scan_items(
-                TABLES['CLIENTES'],
-                filter_expression='activo = :activo',
-                expression_values={':activo': True}
-            )
+            table = get_table(TABLES['CLIENTES'])
+            response = table.scan()
+            customers = response.get('Items', [])
+            
+            # Filtrar solo activos
+            customers = [c for c in customers if c.get('activo', False)]
             
             return success(customers)
         

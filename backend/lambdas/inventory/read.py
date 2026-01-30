@@ -1,19 +1,23 @@
 import json
 import os
-from shared.db_utils import get_item, scan_items, query_items
-from shared.response_utils import success, error, not_found
+import sys
 
-INVENTARIO_TABLE = os.environ['INVENTARIO_ITEMS_TABLE']
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'shared'))
+
+from db_utils import get_item, get_table, TABLES
+from response_utils import success, not_found, server_error
 
 def lambda_handler(event, context):
     try:
-        # GET /inventory/{id}
-        item_id = event.get('pathParameters', {}).get('id')
+        # GET /inventory/{inventarioItemId}
+        path_params = event.get('pathParameters') or {}
+        item_id = path_params.get('inventarioItemId')
+        
         if item_id:
-            item = get_item(INVENTARIO_TABLE, {'inventarioItemId': item_id})
-            if not item:
-                return not_found('Item de inventario no encontrado')
-            return success({'item': item})
+            item = get_item(TABLES['INVENTARIO'], {'inventarioItemId': item_id})
+            if not item or not item.get('activo', False):
+                return not_found('Item de inventario')
+            return success(item)
         
         # GET /inventory?search=xxx&stockBajo=true
         params = event.get('queryStringParameters') or {}
@@ -22,7 +26,9 @@ def lambda_handler(event, context):
         include_inactive = params.get('includeInactive') == 'true'
         
         # Escanear items
-        items = scan_items(INVENTARIO_TABLE)
+        table = get_table(TABLES['INVENTARIO'])
+        response = table.scan()
+        items = response.get('Items', [])
         
         # Filtrar activos
         if not include_inactive:
@@ -47,10 +53,8 @@ def lambda_handler(event, context):
         # Ordenar por nombre
         items.sort(key=lambda x: x.get('nombre', ''))
         
-        return success({
-            'items': items,
-            'total': len(items)
-        })
+        return success(items)
         
     except Exception as e:
-        return error(str(e))
+        print(f'Error reading inventory: {str(e)}')
+        return server_error('Error al obtener inventario', str(e))

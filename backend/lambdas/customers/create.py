@@ -13,7 +13,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'shared'))
 
 from db_utils import put_item, TABLES
 from response_utils import success, validation_error, server_error
-from validators import validate, validate_required, validate_email, validate_phone
 
 
 def lambda_handler(event, context):
@@ -39,16 +38,12 @@ def lambda_handler(event, context):
         cedula = body.get('cedula', '')
         direccion = body.get('direccion', '')
         
-        # Validaciones
-        errors = validate([
-            validate_required(nombre, 'nombre'),
-            validate_required(telefono, 'telefono'),
-            validate_phone(telefono),
-            validate_email(email) if email else None,
-        ])
+        # Validaciones básicas
+        if not nombre or not nombre.strip():
+            return validation_error('El nombre es requerido')
         
-        if errors:
-            return validation_error(', '.join(errors))
+        if not telefono or not telefono.strip():
+            return validation_error('El teléfono es requerido')
         
         # Crear cliente
         cliente_id = str(uuid4())

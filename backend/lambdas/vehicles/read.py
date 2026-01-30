@@ -8,7 +8,7 @@ import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'shared'))
 
-from db_utils import get_item, scan_items, query_items, TABLES
+from db_utils import get_item, get_table, TABLES
 from response_utils import success, not_found, server_error
 
 
@@ -43,13 +43,14 @@ def lambda_handler(event, context):
             return success(vehicle)
             
         elif customer_id:
-            # Listar vehículos de un cliente específico
-            vehicles = query_items(
-                TABLES['VEHICULOS'],
-                'customerId = :customerId',
-                {':customerId': customer_id},
-                index_name='customerId-index'
+            # Listar vehículos de un cliente específico usando GSI
+            table = get_table(TABLES['VEHICULOS'])
+            response = table.query(
+                IndexName='customerId-index',
+                KeyConditionExpression='customerId = :cid',
+                ExpressionAttributeValues={':cid': customer_id}
             )
+            vehicles = response.get('Items', [])
             
             # Filtrar solo activos
             active_vehicles = [v for v in vehicles if v.get('activo', True)]
@@ -58,11 +59,12 @@ def lambda_handler(event, context):
             
         else:
             # Listar todos los vehículos activos
-            vehicles = scan_items(
-                TABLES['VEHICULOS'],
-                filter_expression='activo = :activo',
-                expression_values={':activo': True}
-            )
+            table = get_table(TABLES['VEHICULOS'])
+            response = table.scan()
+            vehicles = response.get('Items', [])
+            
+            # Filtrar solo activos
+            vehicles = [v for v in vehicles if v.get('activo', True)]
             
             return success(vehicles)
         

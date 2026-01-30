@@ -14,7 +14,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'shared'))
 
 from db_utils import get_item, put_item, update_item, query_items, TABLES
 from response_utils import success, not_found, validation_error, server_error, conflict
-from validation_utils import validate_positive_number
+from validators import validate_positive_number
 
 def lambda_handler(event, context):
     try:
