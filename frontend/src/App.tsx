@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import './App.css';
 import Dashboard from './pages/Dashboard';
 import Customers from './pages/Customers';
 import WorkOrders from './pages/WorkOrders';
+import Vehicles from './pages/Vehicles';
+import Inventory from './pages/Inventory';
+import Invoices from './pages/Invoices';
 
 type Page = 'dashboard' | 'customers' | 'work-orders' | 'vehicles' | 'inventory' | 'invoices';
 
@@ -17,6 +19,12 @@ function App() {
         return <Customers />;
       case 'work-orders':
         return <WorkOrders />;
+      case 'vehicles':
+        return <Vehicles />;
+      case 'inventory':
+        return <Inventory />;
+      case 'invoices':
+        return <Invoices />;
       default:
         return <div>Página en construcción</div>;
     }

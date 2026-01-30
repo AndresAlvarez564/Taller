@@ -1,47 +1,46 @@
 import { useEffect, useState } from 'react';
-import { customerService } from '../services/customerService';
-import type { Cliente } from '../types';
-import CustomerForm from '../components/customers/CustomerForm';
+import { inventoryService } from '../services/inventoryService';
+import type { InventarioItem } from '../types';
+import InventoryForm from '../components/inventory/InventoryForm';
 
-export default function Customers() {
-  const [customers, setCustomers] = useState<Cliente[]>([]);
+export default function Inventory() {
+  const [items, setItems] = useState<InventarioItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [editingCustomer, setEditingCustomer] = useState<Cliente | null>(null);
+  const [editingItem, setEditingItem] = useState<InventarioItem | null>(null);
 
   useEffect(() => {
-    loadCustomers();
+    loadItems();
   }, []);
 
-  const loadCustomers = async () => {
+  const loadItems = async () => {
     try {
-      console.log('Cargando clientes...');
-      const data = await customerService.getAll();
-      console.log('Clientes cargados:', data);
-      setCustomers(data);
+      console.log('Cargando inventario...');
+      const data = await inventoryService.getAll();
+      console.log('Inventario cargado:', data);
+      setItems(data);
     } catch (error: any) {
-      console.error('Error loading customers:', error);
-      console.error('Error response:', error.response?.data);
-      alert(`Error al cargar clientes: ${error.response?.data?.mensaje || error.message}`);
-      setCustomers([]);
+      console.error('Error loading inventory:', error);
+      alert(`Error al cargar inventario: ${error.response?.data?.mensaje || error.message}`);
+      setItems([]);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('¿Está seguro de eliminar este cliente?')) return;
+    if (!confirm('¿Está seguro de eliminar este item?')) return;
     
     try {
-      await customerService.delete(id);
-      loadCustomers();
+      await inventoryService.delete(id);
+      loadItems();
     } catch (error: any) {
-      alert(error.response?.data?.mensaje || 'Error al eliminar cliente');
+      alert(error.response?.data?.mensaje || 'Error al eliminar item');
     }
   };
 
-  const handleEdit = (customer: Cliente) => {
-    setEditingCustomer(customer);
+  const handleEdit = (item: InventarioItem) => {
+    setEditingItem(item);
     setShowForm(true);
   };
 
@@ -50,10 +49,10 @@ export default function Customers() {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 'bold' }}>Clientes</h1>
+        <h1 style={{ fontSize: '2rem', fontWeight: 'bold' }}>Inventario</h1>
         <button
           onClick={() => {
-            setEditingCustomer(null);
+            setEditingItem(null);
             setShowForm(true);
           }}
           style={{
@@ -66,7 +65,7 @@ export default function Customers() {
             fontWeight: 600
           }}
         >
-          + Nuevo Cliente
+          + Nuevo Item
         </button>
       </div>
 
@@ -79,29 +78,39 @@ export default function Customers() {
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead style={{ background: '#f7fafc' }}>
             <tr>
+              <th style={thStyle}>SKU</th>
               <th style={thStyle}>Nombre</th>
-              <th style={thStyle}>Teléfono</th>
-              <th style={thStyle}>Email</th>
-              <th style={thStyle}>Dirección</th>
+              <th style={thStyle}>Categoría</th>
+              <th style={thStyle}>Stock</th>
+              <th style={thStyle}>Stock Mínimo</th>
+              <th style={thStyle}>Precio Venta</th>
               <th style={thStyle}>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {customers.map((customer) => (
-              <tr key={customer.clienteId} style={{ borderBottom: '1px solid #e2e8f0' }}>
-                <td style={tdStyle}>{customer.nombre}</td>
-                <td style={tdStyle}>{customer.telefono}</td>
-                <td style={tdStyle}>{customer.email || '-'}</td>
-                <td style={tdStyle}>{customer.direccion || '-'}</td>
+            {items.map((item) => (
+              <tr key={item.inventarioItemId} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                <td style={tdStyle}><strong>{item.sku}</strong></td>
+                <td style={tdStyle}>{item.nombre}</td>
+                <td style={tdStyle}>{item.categoria}</td>
+                <td style={{
+                  ...tdStyle,
+                  color: item.stock <= item.stockMinimo ? '#e53e3e' : '#2d3748',
+                  fontWeight: item.stock <= item.stockMinimo ? 'bold' : 'normal'
+                }}>
+                  {item.stock}
+                </td>
+                <td style={tdStyle}>{item.stockMinimo}</td>
+                <td style={tdStyle}>Bs. {item.precioVenta.toFixed(2)}</td>
                 <td style={tdStyle}>
                   <button
-                    onClick={() => handleEdit(customer)}
+                    onClick={() => handleEdit(item)}
                     style={actionButtonStyle('#667eea')}
                   >
                     Editar
                   </button>
                   <button
-                    onClick={() => handleDelete(customer.clienteId)}
+                    onClick={() => handleDelete(item.inventarioItemId)}
                     style={actionButtonStyle('#e53e3e')}
                   >
                     Eliminar
@@ -114,16 +123,16 @@ export default function Customers() {
       </div>
 
       {showForm && (
-        <CustomerForm
-          customer={editingCustomer}
+        <InventoryForm
+          item={editingItem}
           onClose={() => {
             setShowForm(false);
-            setEditingCustomer(null);
+            setEditingItem(null);
           }}
           onSave={() => {
             setShowForm(false);
-            setEditingCustomer(null);
-            loadCustomers();
+            setEditingItem(null);
+            loadItems();
           }}
         />
       )}

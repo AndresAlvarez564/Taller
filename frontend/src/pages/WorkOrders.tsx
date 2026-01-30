@@ -39,10 +39,14 @@ export default function WorkOrders() {
 
   const loadWorkOrders = async () => {
     try {
+      console.log('Cargando órdenes de trabajo...');
       const data = await workOrdersService.getAll(estadoFilter || undefined);
+      console.log('Órdenes cargadas:', data);
       setWorkOrders(data);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error loading work orders:', error);
+      console.error('Error response:', error.response?.data);
+      alert(`Error al cargar órdenes: ${error.response?.data?.mensaje || error.message}`);
       setWorkOrders([]);
     } finally {
       setLoading(false);
