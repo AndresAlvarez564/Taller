@@ -12,7 +12,7 @@ from decimal import Decimal
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'shared'))
 
-from db_utils import get_item, put_item, update_item, query_items, transact_write, TABLES
+from db_utils import get_item, put_item, update_item, query_items, TABLES
 from response_utils import success, not_found, validation_error, server_error, conflict
 from validation_utils import validate_positive_number
 
@@ -97,23 +97,18 @@ def lambda_handler(event, context):
             
             nuevo_stock = stock_actual - cantidad
             
-            # Transacción: Actualizar stock
-            transacciones.append({
-                'Update': {
-                    'TableName': TABLES['INVENTARIO'],
-                    'Key': {'inventarioItemId': inv_id},
-                    'UpdateExpression': 'SET stock = :nuevo, version = :nueva_version, actualizadoEn = :now',
-                    'ConditionExpression': 'version = :version_actual',
-                    'ExpressionAttributeValues': {
-                        ':nuevo': nuevo_stock,
-                        ':nueva_version': version_actual + 1,
-                        ':version_actual': version_actual,
-                        ':now': now
-                    }
+            # Actualizar stock
+            update_item(
+                TABLES['INVENTARIO'],
+                {'inventarioItemId': inv_id},
+                {
+                    'stock': nuevo_stock,
+                    'version': version_actual + 1,
+                    'actualizadoEn': now
                 }
-            })
+            )
             
-            # Transacción: Crear movimiento de salida en inventario
+            # Crear movimiento de salida en inventario
             mov_id = str(uuid.uuid4())
             movimiento = {
                 'PK': f'INV#{inv_id}',
@@ -127,21 +122,10 @@ def lambda_handler(event, context):
                 'referenciaId': ot_id,
                 'creadoEn': now
             }
-            
-            transacciones.append({
-                'Put': {
-                    'TableName': TABLES['DETALLES'],
-                    'Item': movimiento
-                }
-            })
+            put_item(TABLES['DETALLES'], movimiento)
         
-        # Transacción: Crear item de OT en tabla Detalles
-        transacciones.append({
-            'Put': {
-                'TableName': TABLES['DETALLES'],
-                'Item': item
-            }
-        })
+        # Crear item de OT en tabla Detalles
+        put_item(TABLES['DETALLES'], item)
         
         # Calcular nuevos totales de la orden
         # Obtener todos los items actuales
@@ -161,24 +145,17 @@ def lambda_handler(event, context):
         nuevo_impuesto = nuevo_subtotal * Decimal('0.13')
         nuevo_total = nuevo_subtotal + nuevo_impuesto
         
-        # Transacción: Actualizar totales en la orden de trabajo
-        transacciones.append({
-            'Update': {
-                'TableName': TABLES['ORDENES_TRABAJO'],
-                'Key': {'workOrderId': ot_id},
-                'UpdateExpression': 'SET subtotal = :subtotal, impuesto = :impuesto, total = :total, actualizadoEn = :now',
-                'ExpressionAttributeValues': {
-                    ':subtotal': nuevo_subtotal,
-                    ':impuesto': nuevo_impuesto,
-                    ':total': nuevo_total,
-                    ':now': now
-                }
+        # Actualizar totales en la orden de trabajo
+        update_item(
+            TABLES['ORDENES_TRABAJO'],
+            {'workOrderId': ot_id},
+            {
+                'subtotal': nuevo_subtotal,
+                'impuesto': nuevo_impuesto,
+                'total': nuevo_total,
+                'actualizadoEn': now
             }
-        })
-        
-        # Ejecutar todas las transacciones atómicamente
-        if transacciones:
-            transact_write(transacciones)
+        )
         
         # Convertir Decimal a float para respuesta
         response_item = {
