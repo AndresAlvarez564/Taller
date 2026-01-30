@@ -1,8 +1,12 @@
 import os
-from shared.db_utils import get_item, scan_items, query_items
-from shared.response_utils import success, error, not_found
+import sys
 
-FACTURAS_TABLE = os.environ['FACTURAS_TABLE']
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'shared'))
+
+from db_utils import get_item, scan_items, query_items, TABLES
+from response_utils import success, error, not_found, server_error
+
+FACTURAS_TABLE = TABLES['FACTURAS']
 
 def lambda_handler(event, context):
     try:
@@ -25,18 +29,17 @@ def lambda_handler(event, context):
         if numero:
             facturas = query_items(
                 FACTURAS_TABLE,
-                index_name='numeroFactura-index',
-                key_condition='numeroFactura = :num',
-                expr_values={':num': numero}
+                'numeroFactura = :num',
+                {':num': numero},
+                index_name='numeroFactura-index'
             )
         # Si hay estado, usar GSI
         elif estado:
             facturas = query_items(
                 FACTURAS_TABLE,
-                index_name='estado-creadoEn-index',
-                key_condition='estado = :estado',
-                expr_values={':estado': estado},
-                scan_forward=False  # Más recientes primero
+                'estado = :estado',
+                {':estado': estado},
+                index_name='estado-creadoEn-index'
             )
         else:
             # Scan general
@@ -64,4 +67,5 @@ def lambda_handler(event, context):
         })
         
     except Exception as e:
-        return error(str(e))
+        print(f'Error reading invoices: {str(e)}')
+        return server_error('Error al obtener facturas', str(e))
